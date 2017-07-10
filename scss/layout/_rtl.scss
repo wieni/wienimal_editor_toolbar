@@ -1,0 +1,33 @@
+[dir="rtl"] {
+    .editbar {
+        .toolbar {
+            .level-2 > ul {
+                position: absolute;
+                padding-top: 0;
+                top: 0;
+                right: 200px;
+                width: 200px;
+            }
+
+            .toolbar-menu ul .toolbar-icon {
+                padding-left: 1.3333em;
+            }
+        }
+
+        ul li.menu-item--expanded {
+            ul li.menu-item--expanded {
+                background-position: center left;
+                background-image: url('../misc/icons/0074bd/chevron-left.svg');
+                background-repeat: no-repeat;
+            }
+
+            .menu-item:hover ul {
+                margin: -40px 197px 0 0;
+            }
+        }
+
+        li:hover ul li {
+            float: none !important;
+        }
+    }
+}

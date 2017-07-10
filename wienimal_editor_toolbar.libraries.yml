@@ -1,0 +1,7 @@
+wienimal_editor_toolbar.default:
+  version: "v1.0"
+  css:
+    component:
+      css/toolbar.css: {}
+    theme:
+      css/toolbar.light.css: {}

@@ -1,0 +1,150 @@
+.editbar {
+    .inner {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .nav,
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    // All levels
+    .menu {
+        display: flex;
+        margin: 0 auto 0 20px;
+        padding: 0;
+
+        > li {
+            padding: 0;
+
+            > a,
+            > [data-drupal-link-system-path] {
+                display: block;
+                width: 100%;
+                padding: $item-padding-v $item-padding-h;
+                border: none;
+
+                text-decoration: none;
+                line-height: 1;
+                color: rgba(0, 0, 0, .66) !important;
+
+                &:hover {
+                    text-decoration: none;
+                    color: rgba(0, 0, 0, .8) !important;
+                }
+            }
+        }
+    }
+
+    // Top level
+    .nav {
+        > li {
+            ul {
+                display: none;
+                width: $submenu-width;
+
+                background: #FFFFFF;
+                box-shadow: 2px 2px 3px hsla(0, 0%, 0%, 0.4);
+
+                position: absolute;
+                z-index: 1;
+            }
+
+            &:hover ul {
+                display: block;
+            }
+
+            &:first-of-type > a {
+                padding-left: 0;
+            }
+        }
+
+        li.menu-item {
+            list-style: none none;
+            position: relative;
+            display: flex;
+            align-items: center;
+
+            .is-active {
+                color: #6f6f6f;
+            }
+
+            .icon::before {
+                padding-left: 5px;
+                padding-right: 10px;
+                box-sizing: content-box;
+
+                font-size: 1.2em;
+                vertical-align: text-bottom;
+            }
+
+            a {
+                line-height: 1.2em;
+            }
+        }
+    }
+
+    // All but top level
+    .menu:not(.nav) {
+        margin-left: 0;
+    }
+}
+
+/*
+    NESTED MENU ITEM VISIBILITY/POSITIONING
+ */
+
+.editbar li.menu-item--expanded:hover ul ul,
+.editbar li.menu-item--expanded:hover ul ul ul,
+.editbar li.menu-item--expanded:hover ul ul ul ul,
+.editbar li.menu-item--expanded:hover ul ul ul ul ul {
+    display: none;
+    left: -999em; /* LTR */
+}
+
+/* Lists nested under hovered list items */
+.editbar li.menu-item--expanded:hover ul,
+.editbar li li.menu-item--expanded:hover ul,
+.editbar li li li.menu-item--expanded:hover ul,
+.editbar li li li li.menu-item--expanded:hover ul,
+.editbar li li li li li.menu-item--expanded:hover ul {
+    display: block;
+    left: auto; /* LTR */
+}
+
+.editbar ul li.menu-item--expanded:hover ul {
+    display: block;
+    position: absolute;
+    width: $submenu-width;
+    box-shadow: 1px 1px 2px hsla(0, 0%, 0%, 0.4);
+    z-index: 1;
+    top: $item-height;
+}
+
+.editbar ul li.menu-item--expanded .menu-item > ul {
+    display: none;
+}
+
+.editbar ul li.menu-item--expanded .menu-item:hover ul {
+    display: block;
+    margin: -50px 0 0 $submenu-width;
+}
+
+.editbar li:hover ul li {
+    float: none;
+}
+
+.editbar .toolbar .level-2 > ul {
+    position: absolute;
+    padding-top: 0;
+    top: 0;
+    left: $submenu-width;
+    width: $submenu-width;
+}
+
+.icon::before {
+    content: "";
+}

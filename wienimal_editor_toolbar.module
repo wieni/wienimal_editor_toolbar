@@ -1,0 +1,77 @@
+<?php
+use Drupal\Component\Serialization\Json;
+
+/**
+ * Implements hook_theme().
+ */
+function wienimal_editor_toolbar_theme($existing, $type, $theme, $path)
+{
+    return [
+        'wienimal_editor_toolbar' => [
+            'variables' => [
+                'attributes' => [],
+                'links' => [],
+            ],
+        ],
+    ];
+}
+
+/**
+ * Implements hook_page_top().
+ * @param array $page_top
+ */
+function wienimal_editor_toolbar_page_top(array &$page_top)
+{
+    Drupal::service('wienimal_editor_toolbar.menu_builder')->buildPageTop($page_top);
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function wienimal_editor_toolbar_preprocess_menu__admin(&$variables, $hook)
+{
+    $variables['attributes']['class'][] = 'nav';
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function wienimal_editor_toolbar_preprocess_wienimal_editor_toolbar(&$variables)
+{
+    // Load logo
+    $variables['logo'] = _wienimal_editor_toolbar_get_logo();
+
+    // Load version variables
+    $path = DRUPAL_ROOT . '/version.json';
+    if (file_exists($path)) {
+        $versionFile = Json::decode(file_get_contents($path));
+        $variables['version'] = $versionFile['version'];
+        $variables['versionDate'] = $versionFile['date'];
+    }
+
+    // Load user variables
+    if ($variables['logged_in']) {
+        /** @var \Drupal\Core\Session\UserSession $user */
+        $user = $variables['user']->getAccount();
+        $variables['username'] = $user->getDisplayName();
+    }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function wienimal_editor_toolbar_theme_registry_alter(&$theme_registry)
+{
+    $theme_registry['menu__admin']['path'] = drupal_get_path('module', 'wienimal_editor_toolbar') . '/templates';
+}
+
+function _wienimal_editor_toolbar_get_logo()
+{
+    $activeTheme = Drupal::config('system.theme')->get('default');
+
+    if (file_exists($logo_path = (drupal_get_path('theme', $activeTheme) . '/logo.png'))) {
+        return '/' . $logo_path;
+    }
+
+    return drupal_get_path('module', 'wienimal_editor_toolbar') . '/logo.png';
+}

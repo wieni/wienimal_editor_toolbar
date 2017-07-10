@@ -1,0 +1,11 @@
+wienimal_editor_toolbar.content_overview:
+    title: 'Content overview'
+    description: 'List all content of a specific type'
+    weight: -1
+    route_name: system.admin_content
+    parent: system.admin_content
+
+wienimal_editor_toolbar.content_types:
+    route_name: system.admin_content
+    parent: wienimal_editor_toolbar.content_overview
+    deriver: \Drupal\wienimal_editor_toolbar\Plugin\Derivative\NodeTypesMenuLink
