@@ -1,6 +1,6 @@
 {
   "name": "wieni/wienimal_editor_toolbar",
-  "description": "",
+  "description": "A toolbar build for editors, not developers.",
   "license": "MIT",
   "authors": [
     {

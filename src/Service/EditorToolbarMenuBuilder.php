@@ -6,7 +6,7 @@ use Drupal\Core\Menu\MenuLinkTreeInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Session\AccountProxyInterface;
 
-class CleanToolbarMenuBuilder
+class EditorToolbarMenuBuilder
 {
     /** @var MenuLinkTreeInterface */
     private $menuTree;

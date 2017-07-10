@@ -1,11 +1,11 @@
 services:
     wienimal_editor_toolbar.tree_manipulators:
-        class: Drupal\wienimal_editor_toolbar\Service\CleanToolbarTreeManipulators
+        class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarTreeManipulators
         arguments:
             - '@config.factory'
 
     wienimal_editor_toolbar.menu_builder:
-        class: Drupal\wienimal_editor_toolbar\Service\CleanToolbarMenuBuilder
+        class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarMenuBuilder
         arguments:
             - '@menu.link_tree'
             - '@current_user'

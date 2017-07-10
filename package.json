@@ -1,7 +1,7 @@
 {
   "name": "wienimal_editor_toolbar",
   "version": "1.0.0",
-  "description": "A fresh new toolbar, built for editors.",
+  "description": "A toolbar build for editors, not developers.",
   "main": "",
   "scripts": {
     "build-scss": "node-sass --include-path scss --output-style compressed --output css scss",

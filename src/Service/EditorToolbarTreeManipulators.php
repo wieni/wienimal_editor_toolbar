@@ -6,7 +6,7 @@ use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Menu\MenuLinkDefault;
 use Drupal\Core\Menu\StaticMenuLinkOverrides;
 
-class CleanToolbarTreeManipulators
+class EditorToolbarTreeManipulators
 {
     /** @var ConfigFactory */
     private $configFactory;
