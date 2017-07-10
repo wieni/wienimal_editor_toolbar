@@ -2,6 +2,7 @@
     width: 100%;
     position: relative;
     z-index: 999;
+    font-size: $font-size;
 
     > .inner {
         display: flex;
