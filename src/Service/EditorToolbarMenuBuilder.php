@@ -77,15 +77,13 @@ class EditorToolbarMenuBuilder
             // Only show links that are accessible for the current user.
             ['callable' => 'menu.default_tree_manipulators:checkAccess'],
             // Remove certain unneeded menu items for editors
-            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:removeUnneededMenuItems'],
+            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:removeMenuItems'],
+            // Move certain menu items to the root of the toolbar
+            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:expandMenuItem'],
             // Add icons to the content type menu items
             ['callable' => 'wienimal_editor_toolbar.tree_manipulators:addContentTypeIcons'],
             // Make the 'Add content' menu item not clickable
             ['callable' => 'wienimal_editor_toolbar.tree_manipulators:makeAddContentNotClickable'],
-            // Make 'Add content' and 'Settings' their own root menu item
-            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:seperateContentSubtree'],
-            // Make 'Taxonomy' its own root menu item
-            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:seperateStructureSubtree'],
             // Use the default sorting of menu links.
             ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
         ];
@@ -103,7 +101,7 @@ class EditorToolbarMenuBuilder
      */
     private function showToolbar()
     {
-        return $this->currentUser->hasPermission('access clean toolbar')
+        return $this->currentUser->hasPermission('access editor toolbar')
             && !$this->currentUser->hasPermission('access administration menu');
     }
 }

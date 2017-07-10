@@ -25,15 +25,18 @@ class EditorToolbarTreeManipulators
      * @param array $tree
      * @return array
      */
-    public function removeUnneededMenuItems(array $tree)
+    public function removeMenuItems(array $tree)
     {
-        $items = [
-            ['admin_toolbar_tools.help'],
-            ['system.admin_config'],
-        ];
+        $items = [];
+
+        if (function_exists('wienimal_editor_toolbar_unwanted_menu_items')) {
+            $items = wienimal_editor_toolbar_unwanted_menu_items();
+        }
 
         foreach ($items as $item) {
-            if (count($item) === 1) {
+            if (!is_array($item)) {
+                unset($tree[$item]);
+            } else if (count($item) === 1) {
                 unset($tree[$item[0]]);
             } else if (count($item) === 2) {
                 $subTree = $tree[$item[0]]->subtree;
@@ -46,50 +49,39 @@ class EditorToolbarTreeManipulators
     }
 
     /**
-     * Make 'Add content' and 'Settings' their own root menu item
-     * @param array $tree
-     * @return array
-     */
-    public function seperateContentSubtree(array $tree)
-    {
-        return $this->removeAndSeperateSubtree('system.admin_content', $tree);
-    }
-
-    /**
-     * Make 'Taxonomy' its own root menu item
-     * @param array $tree
-     * @return array
-     */
-    public function seperateStructureSubtree(array $tree)
-    {
-        return $this->removeAndSeperateSubtree('system.admin_structure', $tree);
-    }
-
-    /**
      * Remove menu item and move subtree items to root
-     * @param string $id
      * @param array $tree
      * @return array
      */
-    private function removeAndSeperateSubtree(string $id, array $tree)
+    public function expandMenuItem(array $tree)
     {
-        if (isset($tree[$id])) {
-            $contentMenu = $tree[$id]->subtree;
+        $items = [];
 
-            foreach ($contentMenu as $item => $value) {
-                if (!$contentMenu[$item]->link instanceof MenuLinkDefault) {
+        if (function_exists('wienimal_editor_toolbar_expand_menu_items')) {
+            $items = wienimal_editor_toolbar_expand_menu_items();
+        }
+
+        foreach ($items as $item) {
+            if (!isset($tree[$item])) {
+                continue;
+            }
+
+            $contentMenu = $tree[$item]->subtree;
+
+            foreach ($contentMenu as $menuItem => $value) {
+                if (!$contentMenu[$menuItem]->link instanceof MenuLinkDefault) {
                     continue;
                 }
 
-                $link = $contentMenu[$item]->link;
+                $link = $contentMenu[$menuItem]->link;
                 $link = $this->updateMenuLinkPluginDefinition($link, [
                     'parent' => '',
                 ]);
 
-                $tree[$item] = $contentMenu[$item];
+                $tree[$menuItem] = $contentMenu[$menuItem];
             }
 
-            unset($tree[$id]);
+            unset($tree[$item]);
         }
 
         return $tree;
