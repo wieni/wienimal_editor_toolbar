@@ -89,3 +89,30 @@ function _wienimal_editor_toolbar_get_logo()
 
     return "$module/logo.png";
 }
+
+/**
+ * Apply a user function to every item of a menu tree
+ * @param $value
+ * @param $key
+ * @param $callback
+ */
+function menu_walk_recursive_handler(&$value, $key, $callback)
+{
+    if (is_array($value)) {
+        array_walk($value, 'menu_walk_recursive_handler', $callback);
+    } elseif (!empty($value->subtree)) {
+        array_walk($value->subtree, 'menu_walk_recursive_handler', $callback);
+    } else {
+        $callback($value);
+    }
+}
+
+/**
+ * Callback function for menu_walk_recursive_handler
+ * @param array $tree
+ * @param $callback
+ */
+function menu_walk_recursive(array $tree, $callback)
+{
+    array_walk($tree,'menu_walk_recursive_handler', $callback);
+}

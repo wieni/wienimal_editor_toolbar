@@ -90,42 +90,34 @@ class EditorToolbarTreeManipulators
      */
     public function addContentTypeIcons(array $tree)
     {
-        if (!isset($tree['system.admin_content'])) {
-            return $tree;
-        }
-
-        $contentMenu = $tree['system.admin_content']->subtree;
-        $menuItems = [
+        $nestedMenuItems = [
             'node.add_page' => '/node\.add\.(.+)/',
-            'wienimal_editor_toolbar.content_overview' => '/wienimal_editor_toolbar\.content_types\:(.+)/',
+            'wienimal_editor_toolbar.content_overview.derivatives' => '/wienimal_editor_toolbar\.content_overview\.derivatives\:(.+)/',
+            'wienimal_editor_toolbar.content_add.derivatives' => '/wienimal_editor_toolbar\.content_add\.derivatives\:(.+)/',
         ];
 
-        foreach ($menuItems as $item => $pattern) {
-            if (!isset($contentMenu[$item])) {
-                continue;
-            }
-
-            $contentTypes = $contentMenu[$item]->subtree;
-
-            /** @var \Drupal\Core\Menu\MenuLinkTreeElement $contentType */
-            foreach ($contentTypes as &$contentType) {
-                if (preg_match($pattern, $contentType->link->getPluginId(), $matches)) {
-                    $contentType->options = [
-                        'attributes' => [
-                            'class' => [
-                                'icon',
-                                'icon--s',
-                                'icon--' . $matches[1],
+        menu_walk_recursive(
+            $tree,
+            function (&$value) use ($nestedMenuItems) {
+                foreach ($nestedMenuItems as $item => $pattern) {
+                    if (!$value instanceof MenuLinkTreeElement) {
+                        continue;
+                    }
+                    $plugin = $value->link->getPluginId();
+                    if (preg_match($pattern, $value->link->getPluginId(), $matches)) {
+                        $value->options = [
+                            'attributes' => [
+                                'class' => [
+                                    'icon',
+                                    'icon--s',
+                                    'icon--' . $matches[1],
+                                ],
                             ],
-                        ],
-                    ];
+                        ];
+                    }
                 }
             }
-
-            $contentMenu[$item]->subtree = $contentTypes;
-        }
-
-        $tree['system.admin_content']->subtree = $contentMenu;
+        );
 
         return $tree;
     }
