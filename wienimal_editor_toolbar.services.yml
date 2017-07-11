@@ -9,3 +9,13 @@ services:
         arguments:
             - '@menu.link_tree'
             - '@current_user'
+
+    wienimal_editor_toolbar.content_collector:
+        class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarContentCollector
+        arguments:
+            - '@eck.entity_type.bundle.info'
+
+    wienimal_editor_toolbar.content_overview_menu_item:
+        class: Drupal\wienimal_editor_toolbar\Plugin\Derivative\ContentOverviewMenuItem
+        arguments:
+            - '@wienimal_editor_toolbar.content_collector'

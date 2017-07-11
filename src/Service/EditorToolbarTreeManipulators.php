@@ -3,8 +3,12 @@
 namespace Drupal\wienimal_editor_toolbar\Service;
 
 use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Menu\InaccessibleMenuLink;
 use Drupal\Core\Menu\MenuLinkDefault;
+use Drupal\Core\Menu\MenuLinkTreeElement;
 use Drupal\Core\Menu\StaticMenuLinkOverrides;
+use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\views\Plugin\Derivative\ViewsMenuLink;
 
 class EditorToolbarTreeManipulators
 {
@@ -27,11 +31,7 @@ class EditorToolbarTreeManipulators
      */
     public function removeMenuItems(array $tree)
     {
-        $items = [];
-
-        if (function_exists('wienimal_editor_toolbar_unwanted_menu_items')) {
-            $items = wienimal_editor_toolbar_unwanted_menu_items();
-        }
+        $items = $this->getMenuItemsToRemove();
 
         foreach ($items as $item) {
             if (!is_array($item)) {
@@ -55,11 +55,7 @@ class EditorToolbarTreeManipulators
      */
     public function expandMenuItem(array $tree)
     {
-        $items = [];
-
-        if (function_exists('wienimal_editor_toolbar_expand_menu_items')) {
-            $items = wienimal_editor_toolbar_expand_menu_items();
-        }
+        $items = $this->getMenuItemsToExpand();
 
         foreach ($items as $item) {
             if (!isset($tree[$item])) {
@@ -69,7 +65,7 @@ class EditorToolbarTreeManipulators
             $contentMenu = $tree[$item]->subtree;
 
             foreach ($contentMenu as $menuItem => $value) {
-                if (!$contentMenu[$menuItem]->link instanceof MenuLinkDefault) {
+                if ($contentMenu[$menuItem]->link instanceof InaccessibleMenuLink) {
                     continue;
                 }
 
@@ -161,17 +157,44 @@ class EditorToolbarTreeManipulators
 
     /**
      * Make changes to the plugin definition of a menu link
-     * @param \Drupal\Core\Menu\MenuLinkDefault $link
+     * @param \Drupal\Core\Menu\MenuLinkDefault|\Drupal\views\Plugin\Menu\ViewsMenuLink $link
      * @param array $newDefinition
-     * @return \Drupal\Core\Menu\MenuLinkDefault
+     * @return \Drupal\Core\Menu\MenuLinkDefault|\Drupal\views\Plugin\Menu\ViewsMenuLink
      */
-    private function updateMenuLinkPluginDefinition(MenuLinkDefault $link, array $newDefinition)
+    private function updateMenuLinkPluginDefinition($link, array $newDefinition)
     {
-        return new MenuLinkDefault(
-            [],
-            $link->getPluginId(),
-            array_merge($link->getPluginDefinition(), $newDefinition),
-            new StaticMenuLinkOverrides($this->configFactory)
-        );
+        if ($link instanceof ViewsMenuLink) {
+            $link->updateLink($newDefinition, false);
+            return $link;
+        } elseif ($link instanceof MenuLinkDefault) {
+            return new MenuLinkDefault(
+                [],
+                $link->getPluginId(),
+                array_merge($link->getPluginDefinition(), $newDefinition),
+                new StaticMenuLinkOverrides($this->configFactory)
+            );
+        }
+    }
+
+    /**
+     * @return array
+     */
+    private function getMenuItemsToExpand() {
+        if (function_exists('wienimal_editor_toolbar_expand_menu_items')) {
+            return wienimal_editor_toolbar_expand_menu_items();
+        }
+
+        return [];
+    }
+
+    /**
+     * @return array
+     */
+    private function getMenuItemsToRemove() {
+        if (function_exists('wienimal_editor_toolbar_remove_menu_items')) {
+            return wienimal_editor_toolbar_remove_menu_items();
+        }
+
+        return [];
     }
 }

@@ -76,14 +76,14 @@ class EditorToolbarMenuBuilder
         $manipulators = [
             // Only show links that are accessible for the current user.
             ['callable' => 'menu.default_tree_manipulators:checkAccess'],
-            // Remove certain unneeded menu items for editors
-            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:removeMenuItems'],
-            // Move certain menu items to the root of the toolbar
-            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:expandMenuItem'],
             // Add icons to the content type menu items
             ['callable' => 'wienimal_editor_toolbar.tree_manipulators:addContentTypeIcons'],
             // Make the 'Add content' menu item not clickable
             ['callable' => 'wienimal_editor_toolbar.tree_manipulators:makeAddContentNotClickable'],
+            // Remove certain unneeded menu items for editors
+            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:removeMenuItems'],
+            // Move certain menu items to the root of the toolbar
+            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:expandMenuItem'],
             // Use the default sorting of menu links.
             ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
         ];

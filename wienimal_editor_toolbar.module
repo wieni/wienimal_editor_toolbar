@@ -73,11 +73,19 @@ function wienimal_editor_toolbar_theme_registry_alter(&$theme_registry)
 
 function _wienimal_editor_toolbar_get_logo()
 {
-    $activeTheme = Drupal::config('system.theme')->get('default');
+    $activeTheme = drupal_get_path('theme',Drupal::config('system.theme')->get('default'));
+    $module = drupal_get_path('module', 'wienimal_editor_toolbar');
+    $possibilities = [
+        "$activeTheme/logo.svg",
+        "$activeTheme/logo.png",
+        "$activeTheme/logo.jpg",
+    ];
 
-    if (file_exists($logo_path = (drupal_get_path('theme', $activeTheme) . '/logo.png'))) {
-        return '/' . $logo_path;
+    foreach ($possibilities as $possibility) {
+        if (file_exists($possibility)) {
+            return '/' . $possibility;
+        }
     }
 
-    return drupal_get_path('module', 'wienimal_editor_toolbar') . '/logo.png';
+    return "$module/logo.png";
 }
