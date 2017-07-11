@@ -2,6 +2,7 @@
 
 namespace Drupal\wienimal_editor_toolbar\Service;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Menu\InaccessibleMenuLink;
 use Drupal\Core\Menu\MenuLinkDefault;
@@ -103,14 +104,16 @@ class EditorToolbarTreeManipulators
                     if (!$value instanceof MenuLinkTreeElement) {
                         continue;
                     }
-                    $plugin = $value->link->getPluginId();
+
                     if (preg_match($pattern, $value->link->getPluginId(), $matches)) {
+                        $name = Html::cleanCssIdentifier($matches[1]);
+
                         $value->options = [
                             'attributes' => [
                                 'class' => [
                                     'icon',
                                     'icon--s',
-                                    'icon--' . $matches[1],
+                                    'icon--' . $name,
                                 ],
                             ],
                         ];
