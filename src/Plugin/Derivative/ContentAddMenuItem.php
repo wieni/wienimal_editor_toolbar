@@ -7,7 +7,7 @@ use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\wienimal_editor_toolbar\Service\EditorToolbarContentCollector;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class ContentOverviewMenuItem extends DeriverBase implements ContainerDeriverInterface
+class ContentAddMenuItem extends DeriverBase implements ContainerDeriverInterface
 {
     /** @var EditorToolbarContentCollector $contentCollector */
     private $contentCollector;
@@ -30,6 +30,6 @@ class ContentOverviewMenuItem extends DeriverBase implements ContainerDeriverInt
 
     public function getDerivativeDefinitions($basePluginDefinition)
     {
-        return $this->contentCollector->getOverviewMenu($basePluginDefinition);
+        return $this->contentCollector->getCreateMenu($basePluginDefinition);
     }
 }

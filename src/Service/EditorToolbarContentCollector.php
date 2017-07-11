@@ -2,23 +2,35 @@
 
 namespace Drupal\wienimal_editor_toolbar\Service;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\eck\EckEntityTypeBundleInfo;
-use Drupal\node\Entity\NodeType;
-use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\wienimal_editor_toolbar\Service\ContentSource\EckEntityContentSource;
+use Drupal\wienimal_editor_toolbar\Service\ContentSource\NodeContentSource;
+use Drupal\wienimal_editor_toolbar\Service\ContentSource\TaxonomyTermContentSource;
 
-class EditorToolbarContentCollector {
+class EditorToolbarContentCollector
+{
+    /** @var EckEntityContentSource $eckContentSource */
+    private $eckContentSource;
 
-    /** @var EckEntityTypeBundleInfo $bundleInfo */
-    private $bundleInfo;
+    /** @var NodeContentSource $nodeContentSource */
+    private $nodeContentSource;
+
+    /** @var TaxonomyTermContentSource $taxonomyTermContentSource */
+    private $taxonomyTermContentSource;
 
     /**
      * EditorToolbarContentCollector constructor.
-     * @param EckEntityTypeBundleInfo $bundleInfo
+     * @param NodeContentSource $nodeContentSource
+     * @param TaxonomyTermContentSource $taxonomyTermContentSource
+     * @param EckEntityContentSource $eckContentSource
      */
-    public function __construct(EckEntityTypeBundleInfo $bundleInfo)
-    {
-        $this->bundleInfo = $bundleInfo;
+    public function __construct(
+        NodeContentSource $nodeContentSource,
+        TaxonomyTermContentSource $taxonomyTermContentSource,
+        EckEntityContentSource $eckContentSource
+    ) {
+        $this->nodeContentSource = $nodeContentSource;
+        $this->taxonomyTermContentSource = $taxonomyTermContentSource;
+        $this->eckContentSource = $eckContentSource;
     }
 
     /**
@@ -26,17 +38,32 @@ class EditorToolbarContentCollector {
      * @return array
      */
     public function getOverviewMenu(array $basePluginDefinition) {
-        $config = $this->getConfig();
         $output = [];
 
-        $content = array_merge(
-            $this->getEckEntityTypes($basePluginDefinition, $config['eck']),
-            $this->getNodeTypes($basePluginDefinition, $config['node']),
-            $this->getTaxonomyTerms($basePluginDefinition, $config['taxonomy'])
-        );
+        $sources = [
+            $this->eckContentSource,
+            $this->nodeContentSource,
+            $this->taxonomyTermContentSource
+        ];
 
-        foreach ($content as $item) {
-            $output[$item['id']] = $item;
+        foreach ($sources as $source) {
+            $content = $source->getContent(
+                $basePluginDefinition,
+                $this->getConfig()[$source->getKey()]
+            );
+
+            foreach ($content as $item) {
+                $customRoute = $this->getCustomOverviewRoute($item['id']);
+
+                if ($customRoute) {
+                    $item['route_name'] = $customRoute;
+                } else {
+                    $item['route_name'] = $source->getOverviewRoute($item);
+                    $item['route_parameters'] = $source->getOverviewRouteParameters($item);
+                }
+
+                $output[$item['id']] = $item;
+            }
         }
 
         return $output;
@@ -44,136 +71,38 @@ class EditorToolbarContentCollector {
 
     /**
      * @param array $basePluginDefinition
-     * @param $config
      * @return array
      */
-    private function getNodeTypes(array $basePluginDefinition, $config) {
-        $nodeTypes = NodeType::loadMultiple();
+    public function getCreateMenu(array $basePluginDefinition) {
+        $output = [];
 
-        if (is_array($config)) {
-            $nodeTypes = array_filter(
-                $nodeTypes,
-                function ($nodeType) use ($config) {
-                    return in_array($nodeType->get('type'), $config);
-                }
+        $sources = [
+            $this->eckContentSource,
+            $this->nodeContentSource,
+            $this->taxonomyTermContentSource
+        ];
+
+        foreach ($sources as $source) {
+            $content = $source->getContent(
+                $basePluginDefinition,
+                $this->getConfig()[$source->getKey()]
             );
-        }
 
-        // Map to menu item
-        return array_map(
-            function ($nodeType) use ($basePluginDefinition) {
-                return [
-                        'id' => $nodeType->get('type'),
-                        'title' => new TranslatableMarkup($nodeType->get('name')),
-                        'route_name' => 'system.admin_content',
-                        'route_parameters' => [
-                            'type' => $nodeType->get('type'),
-                        ],
-                    ] + $basePluginDefinition;
-            },
-            $nodeTypes
-        );
-    }
+            foreach ($content as $item) {
+                $customRoute = $this->getCustomCreateRoute($item['id']);
 
-    /**
-     * @param array $basePluginDefinition
-     * @param $config
-     * @return array
-     */
-    private function getTaxonomyTerms(array $basePluginDefinition, $config) {
-        $taxonomyTerms = Vocabulary::loadMultiple();
-
-        if (is_array($config)) {
-            $taxonomyTerms = array_filter(
-                $taxonomyTerms,
-                function ($taxonomyTerm) use ($config) {
-                    return in_array($taxonomyTerm->get('type'), $config);
-                }
-            );
-        }
-
-        // Map to menu item
-        return array_map(
-            function ($taxonomyTerm) use ($basePluginDefinition) {
-                return [
-                        'id' => $taxonomyTerm->get('vid'),
-                        'title' => new TranslatableMarkup($taxonomyTerm->get('name')),
-                        'route_name' => 'entity.taxonomy_vocabulary.overview_form',
-                        'route_parameters' => [
-                            'taxonomy_vocabulary' => $taxonomyTerm->get('vid'),
-                        ],
-                    ] + $basePluginDefinition;
-            },
-            $taxonomyTerms
-        );
-    }
-
-    /**
-     * @param array $basePluginDefinition
-     * @param $config
-     * @return array
-     */
-    public function getEckEntityTypes(array $basePluginDefinition, $config) {
-        $customRoutes = $this->getCustomRoutes();
-        $content = [];
-
-        // Get ECK bundles
-        $types = array_filter(
-            $this->bundleInfo->getAllBundleInfo(),
-            function ($key) {
-                return !in_array($key, ['taxonomy_term', 'node']);
-            },
-            ARRAY_FILTER_USE_KEY
-        );
-
-        if (is_array($config)) {
-            foreach ($types as $entityType => &$bundles) {
-                if (!isset($config[$entityType])) {
-                    unset($types[$entityType]);
-                    continue;
+                if ($customRoute) {
+                    $item['route_name'] = $customRoute;
+                } else {
+                    $item['route_name'] = $source->getCreateRoute($item);
+                    $item['route_parameters'] = $source->getCreateRouteParameters($item);
                 }
 
-                // Only bundles from config
-                $bundles = array_filter(
-                    $bundles,
-                    function ($bundle) use ($config, $entityType) {
-                        return in_array($bundle, $config[$entityType]);
-                    },
-                    ARRAY_FILTER_USE_KEY
-                );
-
-                // Map to menu item
-                foreach ($bundles as $bundleName => $bundle) {
-                    array_push($content, [
-                            'id' => $bundleName,
-                            'title' => new TranslatableMarkup($bundle['label']),
-                            'route_name' => $customRoutes['eck'][$entityType][$bundleName] ?? "eck.entity.{$entityType}.list",
-                            'route_parameters' => [
-                                'type' => $bundleName,
-                            ],
-                        ] + $basePluginDefinition);
-                }
+                $output[$item['id']] = $item;
             }
         }
 
-        return $content;
-    }
-
-    /**
-     * @param $basePluginDefinition
-     * @param $id
-     * @param string $label
-     * @param string $routeName
-     * @param array $routeParameters
-     * @return array
-     */
-    private function buildMenuItem($basePluginDefinition, $id, string $label, string $routeName, array $routeParameters = []) {
-        return [
-                'id' => $id,
-                'title' => new TranslatableMarkup($label),
-                'route_name' => $routeName,
-                'route_parameters' => $routeParameters,
-            ] + $basePluginDefinition;
+        return $output;
     }
 
     /**
@@ -187,14 +116,42 @@ class EditorToolbarContentCollector {
         return [];
     }
 
-    /**
-     * @return array
-     */
-    private function getCustomRoutes() {
-        if (function_exists('wienimal_editor_toolbar_custom_routes')) {
-            return wienimal_editor_toolbar_custom_routes();
+    private function getCustomOverviewRoutes() {
+        if (function_exists('wienimal_editor_toolbar_custom_overview_routes')) {
+            return wienimal_editor_toolbar_custom_overview_routes();
         }
 
         return [];
+    }
+
+    private function getCustomOverviewRoute(string $toFind) {
+        return $this->getCustomRoute($this->getCustomOverviewRoutes(), $toFind);
+    }
+
+    private function getCustomCreateRoutes() {
+        if (function_exists('wienimal_editor_toolbar_custom_create_routes')) {
+            return wienimal_editor_toolbar_custom_create_routes();
+        }
+
+        return [];
+    }
+
+    private function getCustomCreateRoute(string $toFind) {
+        return $this->getCustomRoute($this->getCustomCreateRoutes(), $toFind);
+    }
+
+    private function getCustomRoute(array $routes, string $toFind) {
+        $found = false;
+
+        array_walk_recursive(
+            $routes,
+            function ($value, $key) use ($toFind, &$found) {
+                if ($key === $toFind) {
+                    $found = $value;
+                }
+            }
+        );
+
+        return $found;
     }
 }

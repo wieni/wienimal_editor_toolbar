@@ -1,10 +1,21 @@
 wienimal_editor_toolbar.content_overview:
     title: 'Content overview'
     description: 'List all content of a specific type'
-    weight: -1
+    weight: -2
     route_name: system.admin_content
     parent: system.admin
 
 wienimal_editor_toolbar.content_overview.derivatives:
     parent: wienimal_editor_toolbar.content_overview
-    deriver: \Drupal\wienimal_editor_toolbar\Plugin\Derivative\ContentOverviewMenuItem
+    deriver: Drupal\wienimal_editor_toolbar\Plugin\Derivative\ContentOverviewMenuItem
+
+wienimal_editor_toolbar.content_add:
+    title: 'Add content'
+    description: 'Add new content of a specific type'
+    weight: -1
+    route_name: system.admin_content
+    parent: system.admin
+
+wienimal_editor_toolbar.content_add.derivatives:
+    parent: wienimal_editor_toolbar.content_add
+    deriver: Drupal\wienimal_editor_toolbar\Plugin\Derivative\ContentAddMenuItem
