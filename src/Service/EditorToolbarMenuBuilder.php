@@ -2,28 +2,34 @@
 
 namespace Drupal\wienimal_editor_toolbar\Service;
 
+use Drupal\Core\Extension\ThemeHandler;
 use Drupal\Core\Menu\MenuLinkTreeInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Session\AccountProxyInterface;
 
 class EditorToolbarMenuBuilder
 {
-    /** @var MenuLinkTreeInterface */
+    /** @var MenuLinkTreeInterface $menuTree */
     private $menuTree;
-    /** @var AccountProxyInterface */
+    /** @var AccountProxyInterface $currentUser */
     private $currentUser;
+    /** @var ThemeHandler $themeHandler */
+    private $themeHandler;
 
     /**
      * CleanToolbarMenuBuilder constructor.
      * @param \Drupal\Core\Menu\MenuLinkTreeInterface $menuTree
      * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+     * @param ThemeHandler $themeHandler
      */
     public function __construct(
         MenuLinkTreeInterface $menuTree,
-        AccountProxyInterface $currentUser
+        AccountProxyInterface $currentUser,
+        ThemeHandler $themeHandler
     ) {
         $this->menuTree = $menuTree;
         $this->currentUser = $currentUser;
+        $this->themeHandler = $themeHandler;
     }
 
     public function buildPageTop(array &$page_top)
@@ -44,6 +50,10 @@ class EditorToolbarMenuBuilder
                 ],
             ],
         ];
+
+        if ($this->hasWienimal()) {
+            $page_top['wienimal_editor_toolbar']['#attached']['library'][] = 'wienimal/wienicons';
+        }
     }
 
     /**
@@ -103,5 +113,14 @@ class EditorToolbarMenuBuilder
     {
         return $this->currentUser->hasPermission('access editor toolbar')
             && !$this->currentUser->hasPermission('access administration menu');
+    }
+
+    /**
+     * Check if the Wienimal theme is installed
+     * @return boolean
+     */
+    private function hasWienimal()
+    {
+        return Drupal::service('theme_handler')->themeExists('wienimal');
     }
 }
