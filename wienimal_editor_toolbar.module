@@ -100,10 +100,12 @@ function menu_walk_recursive_handler(&$value, $key, $callback)
 {
     if (is_array($value)) {
         array_walk($value, 'menu_walk_recursive_handler', $callback);
-    } elseif (!empty($value->subtree)) {
-        array_walk($value->subtree, 'menu_walk_recursive_handler', $callback);
     } else {
         $callback($value);
+
+        if (!empty($value->subtree)) {
+            array_walk($value->subtree, 'menu_walk_recursive_handler', $callback);
+        }
     }
 }
 
