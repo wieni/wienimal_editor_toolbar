@@ -130,22 +130,26 @@ class EditorToolbarTreeManipulators
      * @param array $tree
      * @return array
      */
-    public function makeAddContentNotClickable(array $tree)
+    public function makeMenuItemsNotClickable(array $tree)
     {
-        if (
-            !isset($tree['system.admin_content'])
-            || !isset($tree['system.admin_content']->subtree['node.add_page'])
-        ) {
-            return $tree;
-        }
+        $items = $this->getMenuItemsToMakeUnClickable();
 
-        $link = &$tree['system.admin_content']->subtree['node.add_page']->link;
-        if ($link instanceof MenuLinkDefault) {
-            $link = $this->updateMenuLinkPluginDefinition($link, [
-                'route_name' => '<nolink>',
-                'parent' => '',
-            ]);
-        }
+        menu_walk_recursive(
+            $tree,
+            function (&$value) use ($items) {
+                if (
+                    !$value->link instanceof MenuLinkDefault
+                    || !in_array($value->link->getPluginId(), $items)
+                ) {
+                    return;
+                }
+
+                $value->link = $this->updateMenuLinkPluginDefinition($value->link, [
+                    'route_name' => '<nolink>',
+                    'parent' => '',
+                ]);
+            }
+        );
 
         return $tree;
     }
@@ -188,6 +192,17 @@ class EditorToolbarTreeManipulators
     private function getMenuItemsToRemove() {
         if (function_exists('wienimal_editor_toolbar_remove_menu_items')) {
             return wienimal_editor_toolbar_remove_menu_items();
+        }
+
+        return [];
+    }
+
+    /**
+     * @return array
+     */
+    private function getMenuItemsToMakeUnClickable() {
+        if (function_exists('wienimal_editor_toolbar_make_menu_items_unclickable')) {
+            return wienimal_editor_toolbar_make_menu_items_unclickable();
         }
 
         return [];
