@@ -2,6 +2,8 @@
 
 namespace Drupal\wienimal_editor_toolbar\Service;
 
+use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\wienimal_editor_toolbar\Service\ContentSource\EckEntityContentSource;
 use Drupal\wienimal_editor_toolbar\Service\ContentSource\NodeContentSource;
 use Drupal\wienimal_editor_toolbar\Service\ContentSource\TaxonomyTermContentSource;
@@ -10,27 +12,34 @@ class EditorToolbarContentCollector
 {
     /** @var EckEntityContentSource $eckContentSource */
     private $eckContentSource;
-
     /** @var NodeContentSource $nodeContentSource */
     private $nodeContentSource;
-
     /** @var TaxonomyTermContentSource $taxonomyTermContentSource */
     private $taxonomyTermContentSource;
+    /** @var ConfigFactory $configFactory */
+    private $configFactory;
+    /** @var ImmutableConfig $config */
+    private $config;
 
     /**
      * EditorToolbarContentCollector constructor.
      * @param NodeContentSource $nodeContentSource
      * @param TaxonomyTermContentSource $taxonomyTermContentSource
      * @param EckEntityContentSource $eckContentSource
+     * @param ConfigFactory $configFactory
      */
     public function __construct(
         NodeContentSource $nodeContentSource,
         TaxonomyTermContentSource $taxonomyTermContentSource,
-        EckEntityContentSource $eckContentSource
+        EckEntityContentSource $eckContentSource,
+        ConfigFactory $configFactory
     ) {
         $this->nodeContentSource = $nodeContentSource;
         $this->taxonomyTermContentSource = $taxonomyTermContentSource;
         $this->eckContentSource = $eckContentSource;
+        $this->configFactory = $configFactory;
+
+        $this->config = $this->configFactory->get('wienimal_editor_toolbar.settings');
     }
 
     /**
@@ -38,8 +47,11 @@ class EditorToolbarContentCollector
      * @return array
      */
     public function getOverviewMenu(array $basePluginDefinition) {
-        $output = [];
+        if (!$this->config->get('show_combined_content_overview')) {
+            return [];
+        }
 
+        $output = [];
         $sources = [
             $this->eckContentSource,
             $this->nodeContentSource,
@@ -49,7 +61,7 @@ class EditorToolbarContentCollector
         foreach ($sources as $source) {
             $content = $source->getContent(
                 $basePluginDefinition,
-                $this->getConfig()[$source->getKey()]
+                $this->getContentConfig()[$source->getKey()]
             );
 
             foreach ($content as $item) {
@@ -74,8 +86,11 @@ class EditorToolbarContentCollector
      * @return array
      */
     public function getCreateMenu(array $basePluginDefinition) {
-        $output = [];
+        if (!$this->config->get('show_combined_add_content')) {
+            return [];
+        }
 
+        $output = [];
         $sources = [
             $this->eckContentSource,
             $this->nodeContentSource,
@@ -85,7 +100,7 @@ class EditorToolbarContentCollector
         foreach ($sources as $source) {
             $content = $source->getContent(
                 $basePluginDefinition,
-                $this->getConfig()[$source->getKey()]
+                $this->getContentConfig()[$source->getKey()]
             );
 
             foreach ($content as $item) {
@@ -105,23 +120,12 @@ class EditorToolbarContentCollector
         return $output;
     }
 
-    /**
-     * @return array
-     */
-    private function getConfig() {
-        if (function_exists('wienimal_editor_toolbar_content')) {
-            return wienimal_editor_toolbar_content();
-        }
-
-        return [];
+    private function getContentConfig() {
+        return $this->config->get('content') ?? [];
     }
 
     private function getCustomOverviewRoutes() {
-        if (function_exists('wienimal_editor_toolbar_custom_overview_routes')) {
-            return wienimal_editor_toolbar_custom_overview_routes();
-        }
-
-        return [];
+        return $this->config->get('custom_routes.overview') ?? [];
     }
 
     private function getCustomOverviewRoute(string $toFind) {
@@ -129,11 +133,7 @@ class EditorToolbarContentCollector
     }
 
     private function getCustomCreateRoutes() {
-        if (function_exists('wienimal_editor_toolbar_custom_create_routes')) {
-            return wienimal_editor_toolbar_custom_create_routes();
-        }
-
-        return [];
+        return $this->config->get('custom_routes.create') ?? [];
     }
 
     private function getCustomCreateRoute(string $toFind) {

@@ -28,6 +28,7 @@ services:
             - '@wienimal_editor_toolbar.content_source.node'
             - '@wienimal_editor_toolbar.content_source.taxonomy_term'
             - '@wienimal_editor_toolbar.content_source.eck'
+            - '@config.factory'
 
     wienimal_editor_toolbar.content_overview_menu_item:
         class: Drupal\wienimal_editor_toolbar\Plugin\Derivative\ContentOverviewMenuItem

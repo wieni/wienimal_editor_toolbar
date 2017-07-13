@@ -4,6 +4,7 @@ namespace Drupal\wienimal_editor_toolbar\Service;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Menu\InaccessibleMenuLink;
 use Drupal\Core\Menu\MenuLinkDefault;
 use Drupal\Core\Menu\MenuLinkTreeElement;
@@ -13,8 +14,10 @@ use Drupal\views\Plugin\Derivative\ViewsMenuLink;
 
 class EditorToolbarTreeManipulators
 {
-    /** @var ConfigFactory */
+    /** @var ConfigFactory $configFactory */
     private $configFactory;
+    /** @var ImmutableConfig $config */
+    private $config;
 
     /**
      * CleanToolbarTreeManipulators constructor.
@@ -23,6 +26,8 @@ class EditorToolbarTreeManipulators
     public function __construct(ConfigFactory $configFactory)
     {
         $this->configFactory = $configFactory;
+
+        $this->config = $this->configFactory->get('wienimal_editor_toolbar.settings');
     }
 
     /**
@@ -35,15 +40,28 @@ class EditorToolbarTreeManipulators
         $items = $this->getMenuItemsToRemove();
 
         foreach ($items as $item) {
-            if (!is_array($item)) {
-                unset($tree[$item]);
-            } else if (count($item) === 1) {
-                unset($tree[$item[0]]);
-            } else if (count($item) === 2) {
-                $subTree = $tree[$item[0]]->subtree;
-                unset($subTree[$item[1]]);
-                $tree[$item[0]]->subtree = $subTree;
-            }
+            $tree = $this->removeMenuItem($tree, $item);
+        }
+
+        return $tree;
+    }
+
+    /**
+     * Remove a menu item from a menu tree
+     * @param array $tree
+     * @param $item
+     * @return array
+     */
+    public function removeMenuItem(array $tree, $item)
+    {
+        if (!is_array($item)) {
+            unset($tree[$item]);
+        } else if (count($item) === 1) {
+            unset($tree[$item[0]]);
+        } else if (count($item) === 2) {
+            $subTree = $tree[$item[0]]->subtree;
+            unset($subTree[$item[1]]);
+            $tree[$item[0]]->subtree = $subTree;
         }
 
         return $tree;
@@ -93,6 +111,7 @@ class EditorToolbarTreeManipulators
     {
         $nestedMenuItems = [
             'node.add_page' => '/node\.add\.(.+)/',
+            'entity.taxonomy_vocabulary.overview_form' => '/entity\.taxonomy_vocabulary\.overview_form\.(.+)/',
             'wienimal_editor_toolbar.content_overview.derivatives' => '/wienimal_editor_toolbar\.content_overview\.derivatives\:(.+)/',
             'wienimal_editor_toolbar.content_add.derivatives' => '/wienimal_editor_toolbar\.content_add\.derivatives\:(.+)/',
         ];
@@ -155,16 +174,35 @@ class EditorToolbarTreeManipulators
     }
 
     /**
+     * Check if 'Content overview' and 'Add content' menu items have to be shown
+     * @param array $tree
+     * @return array
+     */
+    public function checkCustomMenuItemsAccess(array $tree)
+    {
+        if (!$this->getShowContentOverview()) {
+            $tree = $this->removeMenuItem($tree, 'wienimal_editor_toolbar.content_overview');
+        }
+
+        if (!$this->getShowContentAdd()) {
+            $tree = $this->removeMenuItem($tree, 'wienimal_editor_toolbar.content_add');
+        }
+
+        return $tree;
+    }
+
+    /**
      * Make changes to the plugin definition of a menu link
-     * @param \Drupal\Core\Menu\MenuLinkDefault|\Drupal\views\Plugin\Menu\ViewsMenuLink $link
+     * @param MenuLinkDefault|ViewsMenuLink $link
      * @param array $newDefinition
-     * @return \Drupal\Core\Menu\MenuLinkDefault|\Drupal\views\Plugin\Menu\ViewsMenuLink
+     * @return bool|MenuLinkDefault|ViewsMenuLink
      */
     private function updateMenuLinkPluginDefinition($link, array $newDefinition)
     {
         if ($link instanceof ViewsMenuLink) {
             $link->updateLink($newDefinition, false);
             return $link;
+
         } elseif ($link instanceof MenuLinkDefault) {
             return new MenuLinkDefault(
                 [],
@@ -173,38 +211,42 @@ class EditorToolbarTreeManipulators
                 new StaticMenuLinkOverrides($this->configFactory)
             );
         }
+
+        return false;
+    }
+
+    /**
+     * @return boolean
+     */
+    private function getShowContentAdd() {
+        return $this->config->get('show_combined_add_content') ?? false;
+    }
+
+    /**
+     * @return boolean
+     */
+    private function getShowContentOverview() {
+        return $this->config->get('show_combined_content_overview') ?? false;
     }
 
     /**
      * @return array
      */
     private function getMenuItemsToExpand() {
-        if (function_exists('wienimal_editor_toolbar_expand_menu_items')) {
-            return wienimal_editor_toolbar_expand_menu_items();
-        }
-
-        return [];
+        return $this->config->get('menu_items.expand') ?? [];
     }
 
     /**
      * @return array
      */
     private function getMenuItemsToRemove() {
-        if (function_exists('wienimal_editor_toolbar_remove_menu_items')) {
-            return wienimal_editor_toolbar_remove_menu_items();
-        }
-
-        return [];
+        return $this->config->get('menu_items.remove') ?? [];
     }
 
     /**
      * @return array
      */
     private function getMenuItemsToMakeUnClickable() {
-        if (function_exists('wienimal_editor_toolbar_make_menu_items_unclickable')) {
-            return wienimal_editor_toolbar_make_menu_items_unclickable();
-        }
-
-        return [];
+        return $this->config->get('menu_items.unclickable') ?? [];
     }
 }

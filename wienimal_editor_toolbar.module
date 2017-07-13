@@ -43,13 +43,9 @@ function wienimal_editor_toolbar_preprocess_wienimal_editor_toolbar(&$variables)
 
     // Load version variables
     $path = DRUPAL_ROOT . '/version.json';
-    $showVersionInfo = file_exists($path);
+    $config = \Drupal::config('wienimal_editor_toolbar.settings');
 
-    if (function_exists('wienimal_editor_toolbar_show_version_info')) {
-        $showVersionInfo = wienimal_editor_toolbar_show_version_info() && file_exists($path);
-    }
-
-    if ($showVersionInfo) {
+    if ($config->get('show_version_info') && file_exists($path)) {
         $versionFile = Json::decode(file_get_contents($path));
         $variables['version'] = $versionFile['version'];
         $variables['versionDate'] = $versionFile['date'];
