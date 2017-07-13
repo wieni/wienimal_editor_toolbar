@@ -123,6 +123,6 @@ class EditorToolbarMenuBuilder
      */
     private function hasWienimal()
     {
-        return Drupal::service('theme_handler')->themeExists('wienimal');
+        return $this->themeHandler->themeExists('wienimal');
     }
 }
