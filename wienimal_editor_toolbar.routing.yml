@@ -1,0 +1,8 @@
+wienimal_editor_toolbar.admin_content:
+  path: '/admin/content'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::overview'
+    link_id: 'wienimal_editor_toolbar.admin_content'
+    _title: 'Content'
+  requirements:
+    _permission: 'access editor toolbar'

@@ -1,7 +1,6 @@
 show_version_info: true
-show_combined_content_overview: false
-show_combined_add_content: false
-
+show_combined_content_overview: true
+show_combined_add_content: true
 content:
   node: all
   taxonomy: all
@@ -10,23 +9,24 @@ content:
       - vat
       - client_type
       - country
-
 custom_routes:
-  create:
   overview:
     eck:
       collection:
         vat: view.vats.page_1
         country: view.countries.page_1
         client_type: view.client_types.page_1
-
 menu_items:
   expand:
+    - system.admin_content
   remove:
     - admin_toolbar_tools.help
     - system.admin_config
     - system.admin_structure
-    - system.admin_content
+    - node.add_page
+    - views_view:views.client_types.page_1
+    - views_view:views.vats.page_1
+    - views_view:views.countries.page_1
   unclickable:
     - node.add_page
     - wienimal_editor_toolbar.content_add
