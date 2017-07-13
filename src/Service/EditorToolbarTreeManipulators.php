@@ -10,6 +10,7 @@ use Drupal\Core\Menu\MenuLinkDefault;
 use Drupal\Core\Menu\MenuLinkTreeElement;
 use Drupal\Core\Menu\StaticMenuLinkOverrides;
 use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\user\Entity\User;
 use Drupal\views\Plugin\Derivative\ViewsMenuLink;
 
 class EditorToolbarTreeManipulators
@@ -37,9 +38,7 @@ class EditorToolbarTreeManipulators
      */
     public function removeMenuItems(array $tree)
     {
-        $items = $this->getMenuItemsToRemove();
-
-        foreach ($items as $item) {
+        foreach ($this->getMenuItemsToRemove() as $item) {
             $tree = $this->removeMenuItem($tree, $item);
         }
 
@@ -54,15 +53,14 @@ class EditorToolbarTreeManipulators
      */
     public function removeMenuItem(array $tree, $item)
     {
-        if (!is_array($item)) {
-            unset($tree[$item]);
-        } else if (count($item) === 1) {
-            unset($tree[$item[0]]);
-        } else if (count($item) === 2) {
-            $subTree = $tree[$item[0]]->subtree;
-            unset($subTree[$item[1]]);
-            $tree[$item[0]]->subtree = $subTree;
-        }
+        menu_walk_recursive(
+            $tree,
+            function (&$value) use (&$tree, $item) {
+                if ($value->link->getPluginId() === $item) {
+                    unset($tree[$item]);
+                }
+            }
+        );
 
         return $tree;
     }

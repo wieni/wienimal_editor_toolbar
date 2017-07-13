@@ -90,10 +90,10 @@ class EditorToolbarMenuBuilder
             ['callable' => 'wienimal_editor_toolbar.tree_manipulators:checkCustomMenuItemsAccess'],
             // Add icons to the content type menu items
             ['callable' => 'wienimal_editor_toolbar.tree_manipulators:addContentTypeIcons'],
-            // Remove certain unneeded menu items for editors
-            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:removeMenuItems'],
             // Move certain menu items to the root of the toolbar
             ['callable' => 'wienimal_editor_toolbar.tree_manipulators:expandMenuItem'],
+            // Remove certain unneeded menu items for editors
+            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:removeMenuItems'],
             // Make certain menu items not clickable
             ['callable' => 'wienimal_editor_toolbar.tree_manipulators:makeMenuItemsNotClickable'],
             // Use the default sorting of menu links.
