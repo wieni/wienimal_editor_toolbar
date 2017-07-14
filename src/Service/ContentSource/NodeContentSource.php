@@ -102,9 +102,13 @@ class NodeContentSource extends AbstractContentSource {
             );
         }
 
-        return sprintf(
-            'node-%s',
-            $info['type']
-        );
+        if (isset($info['type'])) {
+            return sprintf(
+                'node-%s',
+                $info['type']
+            );
+        }
+
+        return 'node';
     }
 }
