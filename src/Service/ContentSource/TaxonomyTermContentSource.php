@@ -87,4 +87,16 @@ class TaxonomyTermContentSource extends AbstractContentSource {
     {
         return 'taxonomy';
     }
+
+    /**
+     * @param array $info
+     * @return string
+     */
+    public function buildId(array $info)
+    {
+        return sprintf(
+            'taxonomy-%s',
+            $info['vocabulary']
+        );
+    }
 }

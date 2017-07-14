@@ -84,9 +84,7 @@ class EckEntityContentSource extends AbstractContentSource {
      */
     public function getOverviewRouteParameters(array $menuItem)
     {
-        return [
-            'eck_entity_type' => $menuItem['entity_type'],
-        ];
+        return [];
     }
 
     /**
@@ -116,5 +114,18 @@ class EckEntityContentSource extends AbstractContentSource {
     public function getKey()
     {
         return 'eck';
+    }
+
+    /**
+     * @param array $info
+     * @return string
+     */
+    public function buildId(array $info)
+    {
+        return sprintf(
+            'eck-%s-%s',
+            $info['entityType'],
+            $info['bundle']
+        );
     }
 }

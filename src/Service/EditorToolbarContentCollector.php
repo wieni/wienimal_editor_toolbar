@@ -141,17 +141,16 @@ class EditorToolbarContentCollector
     }
 
     private function getCustomRoute(array $routes, string $toFind) {
-        $found = false;
+        $parts = explode('-', $toFind);
 
-        array_walk_recursive(
-            $routes,
-            function ($value, $key) use ($toFind, &$found) {
-                if ($key === $toFind) {
-                    $found = $value;
-                }
-            }
-        );
+        if (count($parts) === 1 && isset($routes[$parts[0]])) {
+            return $routes[$parts[0]];
+        } elseif (count($parts) === 2 && isset($routes[$parts[0]][$parts[1]])) {
+            return $routes[$parts[0]][$parts[1]];
+        } elseif (count($parts) === 3 && isset($routes[$parts[0]][$parts[1]][$parts[2]])) {
+            return $routes[$parts[0]][$parts[1]][$parts[2]];
+        }
 
-        return $found;
+        return false;
     }
 }

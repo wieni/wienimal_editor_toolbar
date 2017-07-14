@@ -43,6 +43,12 @@ abstract class AbstractContentSource {
     abstract public function getKey();
 
     /**
+     * @param array $info
+     * @return string
+     */
+    abstract public function buildId(array $info);
+
+    /**
      * @param $basePluginDefinition
      * @param $id
      * @param string $label
