@@ -28,9 +28,11 @@ class TaxonomyTermContentSource extends AbstractContentSource {
         // Map to menu item
         return array_map(
             function ($taxonomyTerm) use ($basePluginDefinition) {
-                $id = sprintf('taxonomy-%s', $taxonomyTerm->get('vid'));
+                $vid = $taxonomyTerm->get('vid');
+                $id = sprintf('taxonomy-%s', $vid);
                 return [
                         'id' => $id,
+                        'vid' => $vid,
                         'title' => new TranslatableMarkup($taxonomyTerm->get('name')),
                     ] + $basePluginDefinition;
             },
@@ -54,7 +56,7 @@ class TaxonomyTermContentSource extends AbstractContentSource {
     public function getOverviewRouteParameters(array $menuItem)
     {
         return [
-            'taxonomy_vocabulary' => $menuItem['id'],
+            'taxonomy_vocabulary' => $menuItem['vid'],
         ];
     }
 
@@ -74,7 +76,7 @@ class TaxonomyTermContentSource extends AbstractContentSource {
     public function getCreateRouteParameters(array $menuItem)
     {
         return [
-            'taxonomy_vocabulary' => $menuItem['id'],
+            'taxonomy_vocabulary' => $menuItem['vid'],
         ];
     }
 

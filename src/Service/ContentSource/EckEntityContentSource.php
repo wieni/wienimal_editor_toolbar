@@ -59,6 +59,7 @@ class EckEntityContentSource extends AbstractContentSource {
                     array_push($content, [
                             'id' => $id,
                             'entity_type' => $entityType,
+                            'bundle' => $bundleName,
                             'title' => new TranslatableMarkup($bundle['label']),
                         ] + $basePluginDefinition);
                 }
@@ -105,7 +106,7 @@ class EckEntityContentSource extends AbstractContentSource {
     {
         return [
             'eck_entity_type' => $menuItem['entity_type'],
-            'eck_entity_bundle' => $menuItem['id'],
+            'eck_entity_bundle' => $menuItem['bundle'],
         ];
     }
 

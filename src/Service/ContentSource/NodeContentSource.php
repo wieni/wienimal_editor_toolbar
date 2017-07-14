@@ -28,9 +28,11 @@ class NodeContentSource extends AbstractContentSource {
         // Map to menu item
         return array_map(
             function ($nodeType) use ($basePluginDefinition) {
-                $id = sprintf('node-%s', $nodeType->get('type'));
+                $type = $nodeType->get('type');
+                $id = sprintf('node-%s', $type);
                 return [
                         'id' => $id,
+                        'type' => $type,
                         'title' => new TranslatableMarkup($nodeType->get('name')),
                     ] + $basePluginDefinition;
             },
@@ -54,7 +56,7 @@ class NodeContentSource extends AbstractContentSource {
     public function getOverviewRouteParameters(array $menuItem)
     {
         return [
-            'type' => $menuItem['id'],
+            'type' => $menuItem['type'],
         ];
     }
 
@@ -74,7 +76,7 @@ class NodeContentSource extends AbstractContentSource {
     public function getCreateRouteParameters(array $menuItem)
     {
         return [
-            'node_type' => $menuItem['id'],
+            'node_type' => $menuItem['type'],
         ];
     }
 
