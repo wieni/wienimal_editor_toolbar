@@ -108,29 +108,47 @@ class EditorToolbarTreeManipulators
     public function addContentTypeIcons(array $tree)
     {
         $nestedMenuItems = [
-            'node.add_page' => '/node\.add\.(.+)/',
-            'entity.taxonomy_vocabulary.overview_form' => '/entity\.taxonomy_vocabulary\.overview_form\.(.+)/',
-            'wienimal_editor_toolbar.content_overview.derivatives' => '/wienimal_editor_toolbar\.content_overview\.derivatives\:(.+)/',
-            'wienimal_editor_toolbar.content_add.derivatives' => '/wienimal_editor_toolbar\.content_add\.derivatives\:(.+)/',
+            'node.add_page' => [
+                'pattern' => '/node\.add\.(.+)/',
+                'id' => function ($matches) {
+                    return sprintf('node-%s', $matches[1]);
+                }
+            ],
+            'entity.taxonomy_vocabulary.overview_form' => [
+                'pattern' => '/entity\.taxonomy_vocabulary\.overview_form\.(.+)/',
+                'id' => function ($matches) {
+                    return sprintf('taxonomy-%s', $matches[1]);
+                }
+            ],
+            'wienimal_editor_toolbar.content_overview.derivatives' => [
+                'pattern' => '/wienimal_editor_toolbar\.content_overview\.derivatives\:(.+)/',
+                'id' => function ($matches) {
+                    return $matches[1];
+                }
+            ],
+            'wienimal_editor_toolbar.content_add.derivatives' => [
+                'pattern' => '/wienimal_editor_toolbar\.content_add\.derivatives\:(.+)/',
+                'id' => function ($matches) {
+                    return $matches[1];
+                }
+            ],
         ];
 
         menu_walk_recursive(
             $tree,
             function (&$value) use ($nestedMenuItems) {
-                foreach ($nestedMenuItems as $item => $pattern) {
+                foreach ($nestedMenuItems as $item) {
                     if (!$value instanceof MenuLinkTreeElement) {
                         continue;
                     }
 
-                    if (preg_match($pattern, $value->link->getPluginId(), $matches)) {
-                        $name = Html::cleanCssIdentifier($matches[1]);
-
+                    if (preg_match($item['pattern'], $value->link->getPluginId(), $matches)) {
                         $value->options = [
                             'attributes' => [
                                 'class' => [
                                     'icon',
                                     'icon--s',
-                                    'icon--' . $name,
+                                    'icon--' . $item['id']($matches),
                                 ],
                             ],
                         ];

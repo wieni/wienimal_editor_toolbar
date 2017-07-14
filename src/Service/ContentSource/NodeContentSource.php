@@ -28,8 +28,9 @@ class NodeContentSource extends AbstractContentSource {
         // Map to menu item
         return array_map(
             function ($nodeType) use ($basePluginDefinition) {
+                $id = sprintf('node-%s', $nodeType->get('type'));
                 return [
-                        'id' => $nodeType->get('type'),
+                        'id' => $id,
                         'title' => new TranslatableMarkup($nodeType->get('name')),
                     ] + $basePluginDefinition;
             },

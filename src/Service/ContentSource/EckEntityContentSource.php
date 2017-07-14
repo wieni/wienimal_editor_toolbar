@@ -55,8 +55,9 @@ class EckEntityContentSource extends AbstractContentSource {
 
                 // Map to menu item
                 foreach ($bundles as $bundleName => $bundle) {
+                    $id = sprintf('eck-%s-%s', $entityType, $bundleName);
                     array_push($content, [
-                            'id' => $bundleName,
+                            'id' => $id,
                             'entity_type' => $entityType,
                             'title' => new TranslatableMarkup($bundle['label']),
                         ] + $basePluginDefinition);

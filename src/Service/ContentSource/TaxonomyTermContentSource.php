@@ -28,8 +28,9 @@ class TaxonomyTermContentSource extends AbstractContentSource {
         // Map to menu item
         return array_map(
             function ($taxonomyTerm) use ($basePluginDefinition) {
+                $id = sprintf('taxonomy-%s', $taxonomyTerm->get('vid'));
                 return [
-                        'id' => $taxonomyTerm->get('vid'),
+                        'id' => $id,
                         'title' => new TranslatableMarkup($taxonomyTerm->get('name')),
                     ] + $basePluginDefinition;
             },
