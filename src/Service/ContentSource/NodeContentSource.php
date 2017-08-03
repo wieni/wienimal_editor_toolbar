@@ -94,7 +94,7 @@ class NodeContentSource extends AbstractContentSource {
      */
     public function buildId(array $info)
     {
-        if (isset($info['subType'])) {
+        if (isset($info['subType']) && isset($info['type'])) {
             return sprintf(
                 'node-%s_%s',
                 $info['type'],
