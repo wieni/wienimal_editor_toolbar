@@ -161,9 +161,13 @@ class EditorToolbarContentInfo
         /** @var NodeType $nodeType */
         $nodeTypeFromRoute = $this->currentRouteMatch->getParameter('node_type');
         $nodeTypeFromRequest = $this->request->get('type');
+        $bundles = $this->entityTypeBundleInfo->getBundleInfo('node');
         $result = [];
 
-        if ($this->currentRouteMatch->getRouteName() === 'system.admin_content' && !empty($nodeTypeFromRequest)) {
+        if (
+            $this->currentRouteMatch->getRouteName() === 'system.admin_content'
+                && array_key_exists($nodeTypeFromRequest, $bundles)
+        ) {
             $entity = NodeType::load($nodeTypeFromRequest);
             return [
                 'type' => $entity->get('type'),
