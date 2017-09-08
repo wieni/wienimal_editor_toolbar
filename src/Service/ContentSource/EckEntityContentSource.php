@@ -48,7 +48,9 @@ class EckEntityContentSource extends AbstractContentSource {
                 $bundles = array_filter(
                     $bundles,
                     function ($bundle) use ($config, $entityType) {
-                        return in_array($bundle, $config[$entityType]);
+                        $bundles = $config[$entityType] ?? [];
+                        $bundles = !is_array($bundles) ? [] : $bundles;
+                        return !$bundles || in_array($bundle, $bundles);
                     },
                     ARRAY_FILTER_USE_KEY
                 );

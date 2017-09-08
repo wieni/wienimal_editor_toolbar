@@ -4,8 +4,10 @@ namespace Drupal\wienimal_editor_toolbar\Service\ContentSource;
 
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\node\Entity\NodeType;
+use Drupal\node\NodeTypeInterface;
 
-class NodeContentSource extends AbstractContentSource {
+class NodeContentSource extends AbstractContentSource
+{
 
     /**
      * @param array $basePluginDefinition
@@ -14,20 +16,9 @@ class NodeContentSource extends AbstractContentSource {
      */
     public function getContent(array $basePluginDefinition, $config)
     {
-        $nodeTypes = NodeType::loadMultiple();
-
-        if (is_array($config)) {
-            $nodeTypes = array_filter(
-                $nodeTypes,
-                function ($nodeType) use ($config) {
-                    return in_array($nodeType->get('type'), $config);
-                }
-            );
-        }
-
         // Map to menu item
         return array_map(
-            function ($nodeType) use ($basePluginDefinition) {
+            function (NodeTypeInterface $nodeType) use ($basePluginDefinition) {
                 $type = $nodeType->get('type');
                 $id = sprintf('node-%s', $type);
                 return [
@@ -36,7 +27,7 @@ class NodeContentSource extends AbstractContentSource {
                         'title' => new TranslatableMarkup($nodeType->get('name')),
                     ] + $basePluginDefinition;
             },
-            $nodeTypes
+            $this->getTypes($config)
         );
     }
 
@@ -110,5 +101,30 @@ class NodeContentSource extends AbstractContentSource {
         }
 
         return 'node';
+    }
+
+    /**
+     * @param $config
+     * @return NodeTypeInterface[]
+     */
+    protected function getTypes($config)
+    {
+        return array_filter(
+            NodeType::loadMultiple(),
+            function (NodeTypeInterface $nodeType) use ($config) {
+                // Filter out wmSingles
+                return !$this->isWmSingle($nodeType)
+                    // only return allowed bundles
+                    && (
+                        !is_array($config)
+                        || in_array($nodeType->get('type'), $config)
+                    );
+            }
+        );
+    }
+
+    private function isWmSingle(NodeTypeInterface $nodeType)
+    {
+        return $nodeType->getThirdPartySetting('wmsingles', 'isSingle', false);
     }
 }
