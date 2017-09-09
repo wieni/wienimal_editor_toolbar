@@ -68,7 +68,7 @@ class EditorToolbarContentCollector
                 $customRoute = $this->getCustomOverviewRoute($item['id']);
 
                 if ($customRoute) {
-                    $item['route_name'] = $customRoute;
+                    $item = array_merge($item, $customRoute);
                 } else {
                     $item['route_name'] = $source->getOverviewRoute($item);
                     $item['route_parameters'] = $source->getOverviewRouteParameters($item);
