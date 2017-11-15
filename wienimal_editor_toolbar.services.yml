@@ -1,8 +1,20 @@
 services:
+    wienimal_editor_toolbar:
+        class: Drupal\wienimal_editor_toolbar\Service\EditorToolbar
+        arguments:
+            - '@config.factory'
+
     wienimal_editor_toolbar.tree_manipulators:
         class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarTreeManipulators
         arguments:
             - '@config.factory'
+
+    wienimal_editor_toolbar.access_check:
+        class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarAccessCheck
+        arguments:
+            - '@current_user'
+        tags:
+            - { name: access_check, applies_to: _toolbar_access_check }
 
     wienimal_editor_toolbar.menu_builder:
         class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarMenuBuilder
@@ -11,34 +23,12 @@ services:
             - '@current_user'
             - '@theme_handler'
 
-    wienimal_editor_toolbar.content_source.node:
-        class: Drupal\wienimal_editor_toolbar\Service\ContentSource\NodeContentSource
-
-    wienimal_editor_toolbar.content_source.taxonomy_term:
-        class: Drupal\wienimal_editor_toolbar\Service\ContentSource\TaxonomyTermContentSource
-
-    wienimal_editor_toolbar.content_source.eck:
-        class: Drupal\wienimal_editor_toolbar\Service\ContentSource\EckEntityContentSource
-        arguments:
-            - '@eck.entity_type.bundle.info'
-
     wienimal_editor_toolbar.content_collector:
         class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarContentCollector
         arguments:
-            - '@wienimal_editor_toolbar.content_source.node'
-            - '@wienimal_editor_toolbar.content_source.taxonomy_term'
-            - '@wienimal_editor_toolbar.content_source.eck'
-            - '@config.factory'
-
-    wienimal_editor_toolbar.content_info:
-        class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarContentInfo
-        arguments:
-            - '@current_route_match'
-            - '@eck.entity_type.bundle.info'
-            - '@request_stack'
-            - '@wienimal_editor_toolbar.content_source.node'
-            - '@wienimal_editor_toolbar.content_source.taxonomy_term'
-            - '@wienimal_editor_toolbar.content_source.eck'
+            - '@wienimal_services.content_source.node'
+            - '@wienimal_services.content_source.taxonomy_term'
+            - '@wienimal_services.content_source.eck'
             - '@config.factory'
 
     wienimal_editor_toolbar.content_overview_menu_item:

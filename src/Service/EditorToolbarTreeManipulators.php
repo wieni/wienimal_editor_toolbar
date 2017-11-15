@@ -2,15 +2,13 @@
 
 namespace Drupal\wienimal_editor_toolbar\Service;
 
-use Drupal\Component\Utility\Html;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Menu\InaccessibleMenuLink;
 use Drupal\Core\Menu\MenuLinkDefault;
 use Drupal\Core\Menu\MenuLinkTreeElement;
 use Drupal\Core\Menu\StaticMenuLinkOverrides;
-use Drupal\taxonomy\Entity\Vocabulary;
-use Drupal\user\Entity\User;
 use Drupal\views\Plugin\Derivative\ViewsMenuLink;
 
 class EditorToolbarTreeManipulators
@@ -54,10 +52,13 @@ class EditorToolbarTreeManipulators
     public function removeMenuItem(array $tree, $item)
     {
         menu_walk_recursive(
+        /**
+         * @param MenuLinkTreeElement $value
+         */
             $tree,
-            function (&$value) use (&$tree, $item) {
+            function (&$value) use ($item) {
                 if ($value->link->getPluginId() === $item) {
-                    unset($tree[$item]);
+                    $value->access = AccessResult::forbidden();
                 }
             }
         );
@@ -196,11 +197,29 @@ class EditorToolbarTreeManipulators
      */
     public function checkCustomMenuItemsAccess(array $tree)
     {
+        if ($this->getShowOriginalTaxonomy()) {
+            // Change taxonomy weight
+            menu_walk_recursive(
+                $tree,
+                function (&$value) {
+                    if ($value->link->getPluginId() === 'entity.taxonomy_vocabulary.collection') {
+                        $value->link = $this->updateMenuLinkPluginDefinition($value->link, [
+                            'weight' => -9,
+                        ]);
+                    }
+                }
+            );
+        } else {
+            $tree = $this->removeMenuItem($tree, 'entity.taxonomy_vocabulary.collection');
+        }
+
         if (!$this->getShowContentOverview()) {
             $tree = $this->removeMenuItem($tree, 'wienimal_editor_toolbar.content_overview');
         }
 
-        if (!$this->getShowContentAdd()) {
+        if ($this->getShowContentAdd()) {
+            $tree = $this->removeMenuItem($tree, 'admin_toolbar_tools.add_content');
+        } else {
             $tree = $this->removeMenuItem($tree, 'wienimal_editor_toolbar.content_add');
         }
 
@@ -243,6 +262,30 @@ class EditorToolbarTreeManipulators
      */
     private function getShowContentOverview() {
         return $this->config->get('show_combined_content_overview') ?? false;
+    }
+
+    /**
+     * @return boolean
+     */
+    private function getShowOriginalECK() {
+        $setting = $this->config->get('content.eck');
+        return $setting === 'none' || !$setting;
+    }
+
+    /**
+     * @return boolean
+     */
+    private function getShowOriginalNode() {
+        $setting = $this->config->get('content.node');
+        return $setting === 'none' || !$setting;
+    }
+
+    /**
+     * @return boolean
+     */
+    private function getShowOriginalTaxonomy() {
+        $setting = $this->config->get('content.taxonomy');
+        return $setting === 'none' || !$setting;
     }
 
     /**

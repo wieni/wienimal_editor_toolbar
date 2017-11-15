@@ -24,15 +24,23 @@
   We call a macro which calls itself to render the full tree.
   @see http://twig.sensiolabs.org/doc/tags/macro.html
 #}
-{{ menus.menu_links(items, attributes, 0) }}
 
-{% macro menu_links(items, attributes, menu_level) %}
+{{ menus.menu_links(items, attributes, 0, max_items_per_column) }}
+
+{% macro menu_links(items, attributes, menu_level, max_items_per_column) %}
     {% import _self as menus %}
     {% if items %}
         {% if menu_level == 0 %}
             <ul{{ attributes.addClass('menu') }}>
         {% else %}
-            <ul class="menu">
+            {% set wrap = items|length > max_items_per_column and max_items_per_column > 0 %}
+            {% set menu_classes = [
+                'menu',
+                wrap ? 'menu__wrapped',
+                wrap ? 'menu__wrapped--columns-' ~ (items|length / max_items_per_column)|round(0, 'ceil'),
+                wrap ? 'menu__wrapped--items-' ~ max_items_per_column,
+            ] %}
+            <ul class="{{ menu_classes|join(' ') }}">
                 {% endif %}
                 {% for item in items %}
                     {% set classes = [
@@ -44,7 +52,7 @@
                     <li{{ item.attributes.addClass(classes) }}>
                         {{ link(item.title, item.url) }}
                         {% if item.below %}
-                            {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+                            {{ menus.menu_links(item.below, attributes, menu_level + 1, max_items_per_column) }}
                         {% endif %}
                     </li>
                 {% endfor %}

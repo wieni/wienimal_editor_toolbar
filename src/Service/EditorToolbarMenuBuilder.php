@@ -51,8 +51,8 @@ class EditorToolbarMenuBuilder
             ],
         ];
 
-        if ($this->hasWienimal()) {
-            $page_top['wienimal_editor_toolbar']['#attached']['library'][] = 'wienimal/wienicons';
+        if ($this->hasCustomal()) {
+            $page_top['wienimal_editor_toolbar']['#attached']['library'][] = 'customal/wienicons';
         }
     }
 
@@ -121,8 +121,8 @@ class EditorToolbarMenuBuilder
      * Check if the Wienimal theme is installed
      * @return boolean
      */
-    private function hasWienimal()
+    private function hasCustomal()
     {
-        return $this->themeHandler->themeExists('wienimal');
+        return $this->themeHandler->themeExists('customal');
     }
 }
