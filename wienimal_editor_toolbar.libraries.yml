@@ -1,7 +1,13 @@
-wienimal_editor_toolbar.default:
+default-styling:
   version: "v1.0"
   css:
     component:
       css/toolbar.css: {}
     theme:
       css/toolbar.light.css: {}
+
+overpass-font:
+  version: '1.0.0'
+  css:
+    base:
+      https://fonts.googleapis.com/css?family=Overpass:300,400,600,700: { external: true }
