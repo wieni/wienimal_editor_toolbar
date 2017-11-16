@@ -7,6 +7,7 @@ use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Menu\InaccessibleMenuLink;
 use Drupal\Core\Menu\MenuLinkDefault;
+use Drupal\Core\Menu\MenuLinkInterface;
 use Drupal\Core\Menu\MenuLinkTreeElement;
 use Drupal\Core\Menu\StaticMenuLinkOverrides;
 use Drupal\views\Plugin\Derivative\ViewsMenuLink;
@@ -238,7 +239,7 @@ class EditorToolbarTreeManipulators
             $link->updateLink($newDefinition, false);
             return $link;
 
-        } elseif ($link instanceof MenuLinkDefault) {
+        } elseif ($link instanceof MenuLinkInterface) {
             return new MenuLinkDefault(
                 [],
                 $link->getPluginId(),
