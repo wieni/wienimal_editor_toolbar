@@ -8,6 +8,7 @@ services:
         class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarTreeManipulators
         arguments:
             - '@config.factory'
+            - '@wienimal_services.wienicons'
 
     wienimal_editor_toolbar.access_check:
         class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarAccessCheck
