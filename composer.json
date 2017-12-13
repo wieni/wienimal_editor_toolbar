@@ -14,5 +14,8 @@
   ],
   "minimum-stability": "dev",
   "prefer-stable": true,
-  "type": "drupal-module"
+  "type": "drupal-module",
+  "require": {
+    "wieni/wienimal_services": "^1.0.9"
+  }
 }

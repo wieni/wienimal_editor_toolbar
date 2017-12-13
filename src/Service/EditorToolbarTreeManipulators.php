@@ -11,21 +11,28 @@ use Drupal\Core\Menu\MenuLinkInterface;
 use Drupal\Core\Menu\MenuLinkTreeElement;
 use Drupal\Core\Menu\StaticMenuLinkOverrides;
 use Drupal\views\Plugin\Derivative\ViewsMenuLink;
+use Drupal\wienimal_services\Service\Wienicons;
 
 class EditorToolbarTreeManipulators
 {
     /** @var ConfigFactory $configFactory */
     private $configFactory;
+    /** @var Wienicons */
+    private $wienicons;
     /** @var ImmutableConfig $config */
     private $config;
 
     /**
      * CleanToolbarTreeManipulators constructor.
      * @param \Drupal\Core\Config\ConfigFactory $configFactory
+     * @param \Drupal\wienimal_services\Service\Wienicons $wienicons
      */
-    public function __construct(ConfigFactory $configFactory)
-    {
+    public function __construct(
+        ConfigFactory $configFactory,
+        Wienicons $wienicons
+    ) {
         $this->configFactory = $configFactory;
+        $this->wienicons = $wienicons;
 
         $this->config = $this->configFactory->get('wienimal_editor_toolbar.settings');
     }
@@ -145,17 +152,48 @@ class EditorToolbarTreeManipulators
                     }
 
                     if (preg_match($item['pattern'], $value->link->getPluginId(), $matches)) {
+                        $id = $item['id']($matches);
+
+                        if (!$this->wienicons->hasIcon(Wienicons::CATEGORY_CONTENT, $id)) {
+                            continue;
+                        }
+
                         $value->options = [
                             'attributes' => [
-                                'class' => [
-                                    'icon',
-                                    'icon--s',
-                                    'icon--' . $item['id']($matches),
-                                ],
+                                'class' => $this->wienicons->getClassNames(Wienicons::SIZE_SMALL, $id),
                             ],
                         ];
                     }
                 }
+            }
+        );
+
+        return $tree;
+    }
+
+    /**
+     * Add icons to the content types under the 'Add content' menu
+     * @param array $tree
+     * @return array
+     */
+    public function addMenuItemIcons(array $tree)
+    {
+        menu_walk_recursive(
+            $tree,
+            function (&$value) {
+                if (!$value instanceof MenuLinkTreeElement) {
+                    return;
+                }
+
+                if (!$this->wienicons->hasIcon(Wienicons::CATEGORY_MENU, $this->getMenuIconClass($value))) {
+                    return;
+                }
+
+                $value->options = [
+                    'attributes' => [
+                        'class' => $this->wienicons->getClassNames(Wienicons::SIZE_SMALL, $this->getMenuIconClass($value)),
+                    ],
+                ];
             }
         );
 
@@ -308,5 +346,14 @@ class EditorToolbarTreeManipulators
      */
     private function getMenuItemsToMakeUnClickable() {
         return $this->config->get('menu_items.unclickable') ?? [];
+    }
+
+    /**
+     * @param MenuLinkTreeElement $value
+     * @return string
+     */
+    private function getMenuIconClass($value)
+    {
+        return 'menu-' . str_replace('.', '_', $value->link->getPluginId());
     }
 }

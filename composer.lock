@@ -1,0 +1,46 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "b39a816fb42d8f04b3665f801370085c",
+    "packages": [
+        {
+            "name": "wieni/wienimal_services",
+            "version": "1.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wieni/wienimal_services.git",
+                "reference": "00545edfddda615f905c0a765449f8344998c3f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wieni/wienimal_services/zipball/00545edfddda615f905c0a765449f8344998c3f4",
+                "reference": "00545edfddda615f905c0a765449f8344998c3f4",
+                "shasum": ""
+            },
+            "type": "drupal-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dieter Holvoet",
+                    "email": "dieter@wieni.be"
+                }
+            ],
+            "description": "Provides services for the Wienimal theme",
+            "time": "2017-12-13T14:58:51+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": [],
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
