@@ -27,7 +27,7 @@ class EditorToolbar
         $module = drupal_get_path('module', 'wienimal_editor_toolbar');
 
         $possibilities = array_reduce(
-            [$activeTheme, $adminTheme, $module],
+            [$adminTheme, $activeTheme, $module],
             function ($carry, $item) {
                 return array_merge(
                     $carry,
