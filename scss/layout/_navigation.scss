@@ -59,6 +59,10 @@
                 display: block;
             }
 
+            &:hover > ul {
+                @include wrap;
+            }
+
             &:first-of-type > a {
                 padding-left: 0;
             }
@@ -134,26 +138,7 @@
 .editbar ul li.menu-item--expanded .menu-item:hover ul {
     display: block;
     margin: -50px 0 0 $submenu-width;
-
-    &.menu {
-        &__wrapped {
-            display: flex;
-            flex-direction: column;
-            flex-wrap: wrap;
-
-            @for $i from 2 through 4 {
-                &--columns-#{$i} {
-                    width: $i * 100%;
-                }
-            }
-
-            @for $i from 1 through 10 {
-                &--items-#{$i} {
-                    max-height: $i * 54px;
-                }
-            }
-        }
-    }
+    @include wrap;
 }
 
 .editbar li:hover ul li {
