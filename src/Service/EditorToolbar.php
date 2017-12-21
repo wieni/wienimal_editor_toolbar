@@ -27,14 +27,19 @@ class EditorToolbar
         $module = drupal_get_path('module', 'wienimal_editor_toolbar');
 
         $possibilities = array_reduce(
-            [$adminTheme, $activeTheme, $module],
+            [
+                "$activeTheme/logo-admin",
+                "$adminTheme/logo",
+                "$activeTheme/logo",
+                "$module/logo"
+            ],
             function ($carry, $item) {
                 return array_merge(
                     $carry,
                     [
-                        "$item/logo.svg",
-                        "$item/logo.png",
-                        "$item/logo.jpg",
+                        "$item.svg",
+                        "$item.png",
+                        "$item.jpg",
                     ]
                 );
             },
