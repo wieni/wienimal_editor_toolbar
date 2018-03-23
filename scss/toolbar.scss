@@ -1,9 +1,2 @@
-@import '_utils/variables';
-@import '_utils/wrap';
-
-@import 'base/base';
-
-@import 'components/logo';
-
-@import 'layout/navigation';
-@import 'layout/rtl';
+@import 'toolbar.layout.scss';
+@import 'toolbar.theme.scss';

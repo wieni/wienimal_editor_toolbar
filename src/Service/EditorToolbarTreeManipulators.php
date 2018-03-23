@@ -17,22 +17,17 @@ class EditorToolbarTreeManipulators
 {
     /** @var ConfigFactory $configFactory */
     private $configFactory;
-    /** @var Wienicons */
-    private $wienicons;
     /** @var ImmutableConfig $config */
     private $config;
 
     /**
      * CleanToolbarTreeManipulators constructor.
      * @param \Drupal\Core\Config\ConfigFactory $configFactory
-     * @param \Drupal\wienimal_services\Service\Wienicons $wienicons
      */
     public function __construct(
-        ConfigFactory $configFactory,
-        Wienicons $wienicons
+        ConfigFactory $configFactory
     ) {
         $this->configFactory = $configFactory;
-        $this->wienicons = $wienicons;
 
         $this->config = $this->configFactory->get('wienimal_editor_toolbar.settings');
     }
@@ -105,97 +100,6 @@ class EditorToolbarTreeManipulators
 
             unset($tree[$item]);
         }
-
-        return $tree;
-    }
-
-    /**
-     * Add icons to the content types under the 'Add content' menu
-     * @param array $tree
-     * @return array
-     */
-    public function addContentTypeIcons(array $tree)
-    {
-        $nestedMenuItems = [
-            'node.add_page' => [
-                'pattern' => '/node\.add\.(.+)/',
-                'id' => function ($matches) {
-                    return sprintf('node-%s', $matches[1]);
-                }
-            ],
-            'entity.taxonomy_vocabulary.overview_form' => [
-                'pattern' => '/entity\.taxonomy_vocabulary\.overview_form\.(.+)/',
-                'id' => function ($matches) {
-                    return sprintf('taxonomy-%s', $matches[1]);
-                }
-            ],
-            'wienimal_editor_toolbar.content_overview.derivatives' => [
-                'pattern' => '/wienimal_editor_toolbar\.content_overview\.derivatives\:(.+)/',
-                'id' => function ($matches) {
-                    return $matches[1];
-                }
-            ],
-            'wienimal_editor_toolbar.content_add.derivatives' => [
-                'pattern' => '/wienimal_editor_toolbar\.content_add\.derivatives\:(.+)/',
-                'id' => function ($matches) {
-                    return $matches[1];
-                }
-            ],
-        ];
-
-        menu_walk_recursive(
-            $tree,
-            function (&$value) use ($nestedMenuItems) {
-                foreach ($nestedMenuItems as $item) {
-                    if (!$value instanceof MenuLinkTreeElement) {
-                        continue;
-                    }
-
-                    if (preg_match($item['pattern'], $value->link->getPluginId(), $matches)) {
-                        $id = $item['id']($matches);
-
-                        if (!$this->wienicons->hasIcon(Wienicons::CATEGORY_CONTENT, $id)) {
-                            continue;
-                        }
-
-                        $value->options = [
-                            'attributes' => [
-                                'class' => $this->wienicons->getClassNames(Wienicons::SIZE_SMALL, $id),
-                            ],
-                        ];
-                    }
-                }
-            }
-        );
-
-        return $tree;
-    }
-
-    /**
-     * Add icons to the content types under the 'Add content' menu
-     * @param array $tree
-     * @return array
-     */
-    public function addMenuItemIcons(array $tree)
-    {
-        menu_walk_recursive(
-            $tree,
-            function (&$value) {
-                if (!$value instanceof MenuLinkTreeElement) {
-                    return;
-                }
-
-                if (!$this->wienicons->hasIcon(Wienicons::CATEGORY_MENU, $this->getMenuIconClass($value))) {
-                    return;
-                }
-
-                $value->options = [
-                    'attributes' => [
-                        'class' => $this->wienicons->getClassNames(Wienicons::SIZE_SMALL, $this->getMenuIconClass($value)),
-                    ],
-                ];
-            }
-        );
 
         return $tree;
     }

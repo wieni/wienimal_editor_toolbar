@@ -46,7 +46,7 @@ function wienimal_editor_toolbar_preprocess_menu(&$variables)
 /**
  * Implements hook_preprocess().
  */
-function wienimal_editor_toolbar_preprocess_wienimal_editor_toolbar(&$variables)
+function wienimal_editor_toolbar_template_preprocess_default_variables_alter(&$variables)
 {
     /** @var \Drupal\wienimal_editor_toolbar\Service\EditorToolbar $service */
     $service = Drupal::service('wienimal_editor_toolbar');
@@ -107,4 +107,3 @@ function menu_walk_recursive(array $tree, $callback)
 {
     array_walk($tree,'menu_walk_recursive_handler', $callback);
 }
-

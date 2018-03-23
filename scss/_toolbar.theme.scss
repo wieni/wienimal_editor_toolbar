@@ -1,0 +1,85 @@
+$background-color: #011627;
+
+.editbar.light {
+    background-color: $background-color;
+
+    .menu__item {
+        &--level-1 {
+            color: #ffffff;
+
+            @at-root {
+                .menu--level-1:hover .menu__item--level-1 {
+                    color: #8b93a7;
+                }
+            }
+
+            &:hover {
+                color: #ffffff !important;
+            }
+        }
+
+        &--level-2 {
+            color: #8b93a7;
+
+            &:hover {
+                color: #011627;
+                background: #f5f6fa;
+                box-shadow: inset -3px 0 0 0 #1caf5c;
+            }
+        }
+
+        &--level-3 {
+            color: #333333;
+
+            &:hover {
+                background: #f5f6fa;
+            }
+        }
+    }
+
+    .menu--level-2 {
+        $size: 10px;
+        &::after,
+        &::before {
+            content: '';
+            bottom: 100%;
+            left: 20%;
+            border: solid transparent;
+            height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        &::after {
+            border-color: rgba(255, 255, 255, 0);
+            border-bottom-color: #fff;
+            border-width: $size;
+            margin-left: -$size;
+        }
+
+        &::before {
+            border-color: rgba(217, 220, 223, 0);
+            border-bottom-color: #D9DCDF;
+            border-width: #{$size + 1px};
+            margin-left: -#{$size + 1px};
+        }
+    }
+
+    .menu--level-2,
+    .menu--level-3 {
+        background: #ffffff;
+
+        border: 1px solid #d9dcdf;
+        box-shadow: 0 1px 5px 0 rgba(1,22,39,0.10);
+    }
+
+    .menu--level-3 {
+        margin-top: -11px;
+
+        &::before {
+            background-image: linear-gradient(-270deg, rgba(0,0,0,0.00) 0%, #000000 100%);
+            opacity: .05;
+        }
+    }
+}
