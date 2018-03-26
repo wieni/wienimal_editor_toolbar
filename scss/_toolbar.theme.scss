@@ -19,7 +19,13 @@ $background-color: #011627;
         }
 
         &--level-2 {
-            color: #8b93a7;
+            color: #011627;
+
+            @at-root {
+                .menu--level-2:hover .menu__item--level-2 {
+                    color: #8b93a7;
+                }
+            }
 
             &:hover {
                 color: #011627;
