@@ -11,10 +11,18 @@
 }
 
 .editbar {
+    position: relative;
+    z-index: 999;
+
     &__container {
         display: flex;
         flex-direction: row;
         align-items: center;
+
+        max-width: 1344px;
+        margin: 0 auto;
+        padding-left: 15px;
+        padding-right: 15px;
 
         padding-top: 3rem;
         padding-bottom: 3rem;
@@ -22,6 +30,11 @@
 
     &__logo {
         margin-right: 20px;
+
+        &-img {
+            max-width: 100px;
+            max-height: 55px;
+        }
     }
 
     .menu {
@@ -106,6 +119,8 @@
         padding-left: 12px;
 
         position: absolute;
+
+        margin-top: -11px;
 
         top: 0;
         left: 100%;
