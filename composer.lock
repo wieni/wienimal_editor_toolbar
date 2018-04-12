@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b39a816fb42d8f04b3665f801370085c",
+    "content-hash": "0d63d287bf879c5a986be8c94d305cfb",
     "packages": [
         {
             "name": "wieni/wienimal_services",
-            "version": "1.0.9",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wieni/wienimal_services.git",
-                "reference": "00545edfddda615f905c0a765449f8344998c3f4"
+                "reference": "c190c69ed36e54c16304035d6a8c427140410cc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wieni/wienimal_services/zipball/00545edfddda615f905c0a765449f8344998c3f4",
-                "reference": "00545edfddda615f905c0a765449f8344998c3f4",
+                "url": "https://api.github.com/repos/wieni/wienimal_services/zipball/c190c69ed36e54c16304035d6a8c427140410cc1",
+                "reference": "c190c69ed36e54c16304035d6a8c427140410cc1",
                 "shasum": ""
             },
             "type": "drupal-module",
@@ -32,7 +32,7 @@
                 }
             ],
             "description": "Provides services for the Wienimal theme",
-            "time": "2017-12-13T14:58:51+00:00"
+            "time": "2018-04-12T09:28:50+00:00"
         }
     ],
     "packages-dev": [],

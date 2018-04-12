@@ -16,6 +16,6 @@
   "prefer-stable": true,
   "type": "drupal-module",
   "require": {
-    "wieni/wienimal_services": "^1.0.9"
+    "wieni/wienimal_services": "^2.0"
   }
 }

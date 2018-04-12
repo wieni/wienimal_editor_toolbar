@@ -11,24 +11,18 @@ use Drupal\Core\Menu\MenuLinkInterface;
 use Drupal\Core\Menu\MenuLinkTreeElement;
 use Drupal\Core\Menu\StaticMenuLinkOverrides;
 use Drupal\views\Plugin\Derivative\ViewsMenuLink;
-use Drupal\wienimal_services\Service\Wienicons;
 
 class EditorToolbarTreeManipulators
 {
-    /** @var ConfigFactory $configFactory */
+    /** @var ConfigFactory */
     private $configFactory;
-    /** @var ImmutableConfig $config */
+    /** @var ImmutableConfig */
     private $config;
 
-    /**
-     * CleanToolbarTreeManipulators constructor.
-     * @param \Drupal\Core\Config\ConfigFactory $configFactory
-     */
     public function __construct(
         ConfigFactory $configFactory
     ) {
         $this->configFactory = $configFactory;
-
         $this->config = $this->configFactory->get('wienimal_editor_toolbar.settings');
     }
 
