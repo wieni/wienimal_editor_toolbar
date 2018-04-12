@@ -35,17 +35,6 @@ function wienimal_editor_toolbar_preprocess_menu__admin(&$variables, $hook)
 /**
  * Implements hook_preprocess().
  */
-function wienimal_editor_toolbar_preprocess_menu(&$variables)
-{
-    $config = Drupal::config('wienimal_editor_toolbar.settings');
-
-    // Load max items per column
-    $variables['max_items_per_column'] = $config->get('max_items_per_column');
-}
-
-/**
- * Implements hook_preprocess().
- */
 function wienimal_editor_toolbar_template_preprocess_default_variables_alter(&$variables)
 {
     /** @var \Drupal\wienimal_editor_toolbar\Service\EditorToolbar $service */
