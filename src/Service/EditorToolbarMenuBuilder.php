@@ -46,7 +46,7 @@ class EditorToolbarMenuBuilder
             */
             '#attached' => [
                 'library' => [
-                    'wienimal_editor_toolbar/editbar-left',
+                    'wienimal_editor_toolbar/editbar-top',
                 ],
             ],
         ];
