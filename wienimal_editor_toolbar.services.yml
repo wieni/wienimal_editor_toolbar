@@ -9,13 +9,6 @@ services:
         arguments:
             - '@config.factory'
 
-    wienimal_editor_toolbar.access_check:
-        class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarAccessCheck
-        arguments:
-            - '@current_user'
-        tags:
-            - { name: access_check, applies_to: _toolbar_access_check }
-
     wienimal_editor_toolbar.menu_builder:
         class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarMenuBuilder
         arguments:

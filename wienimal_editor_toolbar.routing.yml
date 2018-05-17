@@ -5,4 +5,4 @@ wienimal_editor_toolbar.admin_content:
     link_id: 'wienimal_editor_toolbar.admin_content'
     _title: 'Content'
   requirements:
-    _toolbar_access_check: access
+    _permission: 'access editor toolbar'
