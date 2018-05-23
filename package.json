@@ -28,7 +28,8 @@
         "add": true
       },
       "cssnano": {
-        "zindex": false
+        "zindex": false,
+        "reduceIdents": false
       }
     }
   }
