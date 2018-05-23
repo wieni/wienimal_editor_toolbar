@@ -6,7 +6,3 @@ package: sqndr
 dependencies:
   - node
   - wienimal_services
-
-libraries:
-  - wienimal_editor_toolbar/default-styling
-  - wienimal_editor_toolbar/overpass-font

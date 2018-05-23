@@ -46,8 +46,7 @@ class EditorToolbarMenuBuilder
             */
             '#attached' => [
                 'library' => [
-                    'wienimal_editor_toolbar/default-styling',
-                    'wienimal_editor_toolbar/overpass-font',
+                    'wienimal_editor_toolbar/editbar-top',
                 ],
             ],
         ];
