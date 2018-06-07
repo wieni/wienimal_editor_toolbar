@@ -12,7 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "cssnano": "^3.10.0",
-    "node-sass": "^4.5.1",
+    "node-sass": "^4.9.0",
     "postcss-cli": "^3.0.0",
     "postcss-load-config": "^1.2.0"
   },
