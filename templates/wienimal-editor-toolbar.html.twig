@@ -1,19 +1,8 @@
-<div class="editbar light">
-    <div class="inner">
-        <div class="top">
-            <a class="logo" href="{{ path('<front>') }}">
-                <img src="{{ logo }}">
-            </a>
-            {{ links }}
-            <div class="actions">
-                <p>{% trans %}Welcome back{% endtrans %}, <b>{{ username }}</b> (<i><a href="{{ path('user.logout') }}">{% trans %}Log out{% endtrans %}</a></i>)</p>
-                {% if version is not empty %}
-                  <div class="version">
-                    <b>{{ version }}</b>
-                    <span>{{ versionDate|date('d-m-Y H:i:s') }}</span>
-                  </div>
-                {% endif %}
-            </div>
-        </div>
+<div class="editbar light" data-editbar>
+    <div class="editbar__container">
+        <a class="editbar__logo" href="{{ path('<front>') }}">
+            <img class="editbar__logo-img" src="{{ logo }}">
+        </a>
+        {{ links }}
     </div>
 </div>

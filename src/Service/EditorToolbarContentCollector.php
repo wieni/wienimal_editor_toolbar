@@ -4,9 +4,9 @@ namespace Drupal\wienimal_editor_toolbar\Service;
 
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ImmutableConfig;
-use Drupal\wienimal_editor_toolbar\Service\ContentSource\EckEntityContentSource;
-use Drupal\wienimal_editor_toolbar\Service\ContentSource\NodeContentSource;
-use Drupal\wienimal_editor_toolbar\Service\ContentSource\TaxonomyTermContentSource;
+use Drupal\wienimal_services\Service\ContentSource\EckEntityContentSource;
+use Drupal\wienimal_services\Service\ContentSource\NodeContentSource;
+use Drupal\wienimal_services\Service\ContentSource\TaxonomyTermContentSource;
 
 class EditorToolbarContentCollector
 {

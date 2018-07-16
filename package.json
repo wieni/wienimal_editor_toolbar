@@ -1,7 +1,7 @@
 {
   "name": "wienimal_editor_toolbar",
   "version": "1.0.0",
-  "description": "A toolbar build for editors, not developers.",
+  "description": "A toolbar built for editors, not developers.",
   "main": "",
   "scripts": {
     "build-scss": "node-sass --include-path scss --output-style compressed --output css scss",
@@ -12,7 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "cssnano": "^3.10.0",
-    "node-sass": "^4.5.1",
+    "node-sass": "^4.9.0",
     "postcss-cli": "^3.0.0",
     "postcss-load-config": "^1.2.0"
   },
@@ -28,7 +28,8 @@
         "add": true
       },
       "cssnano": {
-        "zindex": false
+        "zindex": false,
+        "reduceIdents": false
       }
     }
   }

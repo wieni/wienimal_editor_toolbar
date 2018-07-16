@@ -46,14 +46,10 @@ class EditorToolbarMenuBuilder
             */
             '#attached' => [
                 'library' => [
-                    'wienimal_editor_toolbar/wienimal_editor_toolbar.default',
+                    'wienimal_editor_toolbar/editbar-top',
                 ],
             ],
         ];
-
-        if ($this->hasWienimal()) {
-            $page_top['wienimal_editor_toolbar']['#attached']['library'][] = 'wienimal/wienicons';
-        }
     }
 
     /**
@@ -88,8 +84,6 @@ class EditorToolbarMenuBuilder
             ['callable' => 'menu.default_tree_manipulators:checkAccess'],
             // Check if 'Content overview' and 'Add content' menu items have to be shown
             ['callable' => 'wienimal_editor_toolbar.tree_manipulators:checkCustomMenuItemsAccess'],
-            // Add icons to the content type menu items
-            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:addContentTypeIcons'],
             // Move certain menu items to the root of the toolbar
             ['callable' => 'wienimal_editor_toolbar.tree_manipulators:expandMenuItem'],
             // Remove certain unneeded menu items for editors
@@ -121,8 +115,8 @@ class EditorToolbarMenuBuilder
      * Check if the Wienimal theme is installed
      * @return boolean
      */
-    private function hasWienimal()
+    private function hasCustomal()
     {
-        return $this->themeHandler->themeExists('wienimal');
+        return $this->themeHandler->themeExists('customal');
     }
 }

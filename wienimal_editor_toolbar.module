@@ -1,5 +1,4 @@
 <?php
-use Drupal\Component\Serialization\Json;
 
 /**
  * Implements hook_theme().
@@ -36,19 +35,21 @@ function wienimal_editor_toolbar_preprocess_menu__admin(&$variables, $hook)
 /**
  * Implements hook_preprocess().
  */
-function wienimal_editor_toolbar_preprocess_wienimal_editor_toolbar(&$variables)
+function wienimal_editor_toolbar_template_preprocess_default_variables_alter(&$variables)
 {
+    /** @var \Drupal\wienimal_editor_toolbar\Service\EditorToolbar $service */
+    $service = Drupal::service('wienimal_editor_toolbar');
+    $config = Drupal::config('wienimal_editor_toolbar.settings');
+
     // Load logo
-    $variables['logo'] = _wienimal_editor_toolbar_get_logo();
+    if ($config->get('show_logo') && $logo = $service->getLogo()) {
+        $variables['logo'] = $logo;
+    }
 
     // Load version variables
-    $path = DRUPAL_ROOT . '/version.json';
-    $config = \Drupal::config('wienimal_editor_toolbar.settings');
-
-    if ($config->get('show_version_info') && file_exists($path)) {
-        $versionFile = Json::decode(file_get_contents($path));
-        $variables['version'] = $versionFile['version'];
-        $variables['versionDate'] = $versionFile['date'];
+    if ($config->get('show_version_info') && $versionInfo = $service->getVersionInfo()) {
+        $variables['version'] = $versionInfo['version'];
+        $variables['versionDate'] = $versionInfo['date'];
     }
 
     // Load user variables
@@ -65,25 +66,6 @@ function wienimal_editor_toolbar_preprocess_wienimal_editor_toolbar(&$variables)
 function wienimal_editor_toolbar_theme_registry_alter(&$theme_registry)
 {
     $theme_registry['menu__admin']['path'] = drupal_get_path('module', 'wienimal_editor_toolbar') . '/templates';
-}
-
-function _wienimal_editor_toolbar_get_logo()
-{
-    $activeTheme = drupal_get_path('theme',Drupal::config('system.theme')->get('default'));
-    $module = drupal_get_path('module', 'wienimal_editor_toolbar');
-    $possibilities = [
-        "$activeTheme/logo.svg",
-        "$activeTheme/logo.png",
-        "$activeTheme/logo.jpg",
-    ];
-
-    foreach ($possibilities as $possibility) {
-        if (file_exists($possibility)) {
-            return '/' . $possibility;
-        }
-    }
-
-    return "$module/logo.png";
 }
 
 /**

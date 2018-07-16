@@ -1,7 +1,8 @@
 name: Wienimal Editor Toolbar
 type: module
-description: "A toolbar build for editors, not developers."
+description: "A toolbar built for editors, not developers."
 core: 8.x
 package: sqndr
 dependencies:
   - node
+  - wienimal_services

@@ -2,32 +2,27 @@
 
 namespace Drupal\wienimal_editor_toolbar\Service;
 
-use Drupal\Component\Utility\Html;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Menu\InaccessibleMenuLink;
 use Drupal\Core\Menu\MenuLinkDefault;
+use Drupal\Core\Menu\MenuLinkInterface;
 use Drupal\Core\Menu\MenuLinkTreeElement;
 use Drupal\Core\Menu\StaticMenuLinkOverrides;
-use Drupal\taxonomy\Entity\Vocabulary;
-use Drupal\user\Entity\User;
 use Drupal\views\Plugin\Derivative\ViewsMenuLink;
 
 class EditorToolbarTreeManipulators
 {
-    /** @var ConfigFactory $configFactory */
+    /** @var ConfigFactory */
     private $configFactory;
-    /** @var ImmutableConfig $config */
+    /** @var ImmutableConfig */
     private $config;
 
-    /**
-     * CleanToolbarTreeManipulators constructor.
-     * @param \Drupal\Core\Config\ConfigFactory $configFactory
-     */
-    public function __construct(ConfigFactory $configFactory)
-    {
+    public function __construct(
+        ConfigFactory $configFactory
+    ) {
         $this->configFactory = $configFactory;
-
         $this->config = $this->configFactory->get('wienimal_editor_toolbar.settings');
     }
 
@@ -54,10 +49,13 @@ class EditorToolbarTreeManipulators
     public function removeMenuItem(array $tree, $item)
     {
         menu_walk_recursive(
+        /**
+         * @param MenuLinkTreeElement $value
+         */
             $tree,
-            function (&$value) use (&$tree, $item) {
+            function (&$value) use ($item) {
                 if ($value->link->getPluginId() === $item) {
-                    unset($tree[$item]);
+                    $value->access = AccessResult::forbidden();
                 }
             }
         );
@@ -101,66 +99,6 @@ class EditorToolbarTreeManipulators
     }
 
     /**
-     * Add icons to the content types under the 'Add content' menu
-     * @param array $tree
-     * @return array
-     */
-    public function addContentTypeIcons(array $tree)
-    {
-        $nestedMenuItems = [
-            'node.add_page' => [
-                'pattern' => '/node\.add\.(.+)/',
-                'id' => function ($matches) {
-                    return sprintf('node-%s', $matches[1]);
-                }
-            ],
-            'entity.taxonomy_vocabulary.overview_form' => [
-                'pattern' => '/entity\.taxonomy_vocabulary\.overview_form\.(.+)/',
-                'id' => function ($matches) {
-                    return sprintf('taxonomy-%s', $matches[1]);
-                }
-            ],
-            'wienimal_editor_toolbar.content_overview.derivatives' => [
-                'pattern' => '/wienimal_editor_toolbar\.content_overview\.derivatives\:(.+)/',
-                'id' => function ($matches) {
-                    return $matches[1];
-                }
-            ],
-            'wienimal_editor_toolbar.content_add.derivatives' => [
-                'pattern' => '/wienimal_editor_toolbar\.content_add\.derivatives\:(.+)/',
-                'id' => function ($matches) {
-                    return $matches[1];
-                }
-            ],
-        ];
-
-        menu_walk_recursive(
-            $tree,
-            function (&$value) use ($nestedMenuItems) {
-                foreach ($nestedMenuItems as $item) {
-                    if (!$value instanceof MenuLinkTreeElement) {
-                        continue;
-                    }
-
-                    if (preg_match($item['pattern'], $value->link->getPluginId(), $matches)) {
-                        $value->options = [
-                            'attributes' => [
-                                'class' => [
-                                    'icon',
-                                    'icon--s',
-                                    'icon--' . $item['id']($matches),
-                                ],
-                            ],
-                        ];
-                    }
-                }
-            }
-        );
-
-        return $tree;
-    }
-
-    /**
      * Make the 'Add content' menu item not clickable
      * @param array $tree
      * @return array
@@ -196,11 +134,29 @@ class EditorToolbarTreeManipulators
      */
     public function checkCustomMenuItemsAccess(array $tree)
     {
+        if ($this->getShowOriginalTaxonomy()) {
+            // Change taxonomy weight
+            menu_walk_recursive(
+                $tree,
+                function (&$value) {
+                    if ($value->link->getPluginId() === 'entity.taxonomy_vocabulary.collection') {
+                        $value->link = $this->updateMenuLinkPluginDefinition($value->link, [
+                            'weight' => -9,
+                        ]);
+                    }
+                }
+            );
+        } else {
+            $tree = $this->removeMenuItem($tree, 'entity.taxonomy_vocabulary.collection');
+        }
+
         if (!$this->getShowContentOverview()) {
             $tree = $this->removeMenuItem($tree, 'wienimal_editor_toolbar.content_overview');
         }
 
-        if (!$this->getShowContentAdd()) {
+        if ($this->getShowContentAdd()) {
+            $tree = $this->removeMenuItem($tree, 'admin_toolbar_tools.add_content');
+        } else {
             $tree = $this->removeMenuItem($tree, 'wienimal_editor_toolbar.content_add');
         }
 
@@ -219,7 +175,7 @@ class EditorToolbarTreeManipulators
             $link->updateLink($newDefinition, false);
             return $link;
 
-        } elseif ($link instanceof MenuLinkDefault) {
+        } elseif ($link instanceof MenuLinkInterface) {
             return new MenuLinkDefault(
                 [],
                 $link->getPluginId(),
@@ -246,6 +202,30 @@ class EditorToolbarTreeManipulators
     }
 
     /**
+     * @return boolean
+     */
+    private function getShowOriginalECK() {
+        $setting = $this->config->get('content.eck');
+        return $setting === 'none' || !$setting;
+    }
+
+    /**
+     * @return boolean
+     */
+    private function getShowOriginalNode() {
+        $setting = $this->config->get('content.node');
+        return $setting === 'none' || !$setting;
+    }
+
+    /**
+     * @return boolean
+     */
+    private function getShowOriginalTaxonomy() {
+        $setting = $this->config->get('content.taxonomy');
+        return $setting === 'none' || !$setting;
+    }
+
+    /**
      * @return array
      */
     private function getMenuItemsToExpand() {
@@ -264,5 +244,14 @@ class EditorToolbarTreeManipulators
      */
     private function getMenuItemsToMakeUnClickable() {
         return $this->config->get('menu_items.unclickable') ?? [];
+    }
+
+    /**
+     * @param MenuLinkTreeElement $value
+     * @return string
+     */
+    private function getMenuIconClass($value)
+    {
+        return 'menu-' . str_replace('.', '_', $value->link->getPluginId());
     }
 }
