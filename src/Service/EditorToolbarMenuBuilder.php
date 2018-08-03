@@ -2,7 +2,8 @@
 
 namespace Drupal\wienimal_editor_toolbar\Service;
 
-use Drupal\Core\Extension\ThemeHandler;
+use Drupal\Core\Extension\ThemeHandlerInterface;
+use Drupal\Core\Menu\MenuActiveTrailInterface;
 use Drupal\Core\Menu\MenuLinkTreeInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -10,26 +11,31 @@ use Drupal\Core\Session\AccountProxyInterface;
 class EditorToolbarMenuBuilder
 {
     /** @var MenuLinkTreeInterface $menuTree */
-    private $menuTree;
+    protected $menuTree;
     /** @var AccountProxyInterface $currentUser */
-    private $currentUser;
-    /** @var ThemeHandler $themeHandler */
-    private $themeHandler;
+    protected $currentUser;
+    /** @var ThemeHandlerInterface $themeHandler */
+    protected $themeHandler;
+    /** @var MenuActiveTrailInterface $menuActiveTrail */
+    protected $menuActiveTrail;
 
     /**
      * CleanToolbarMenuBuilder constructor.
-     * @param \Drupal\Core\Menu\MenuLinkTreeInterface $menuTree
-     * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
-     * @param ThemeHandler $themeHandler
+     * @param MenuLinkTreeInterface $menuTree
+     * @param AccountProxyInterface $currentUser
+     * @param ThemeHandlerInterface $themeHandler
+     * @param MenuActiveTrailInterface $menuActiveTrail
      */
     public function __construct(
         MenuLinkTreeInterface $menuTree,
         AccountProxyInterface $currentUser,
-        ThemeHandler $themeHandler
+        ThemeHandlerInterface $themeHandler,
+        MenuActiveTrailInterface $menuActiveTrail
     ) {
         $this->menuTree = $menuTree;
         $this->currentUser = $currentUser;
         $this->themeHandler = $themeHandler;
+        $this->menuActiveTrail = $menuActiveTrail;
     }
 
     public function buildPageTop(array &$page_top)
@@ -67,10 +73,13 @@ class EditorToolbarMenuBuilder
      */
     public function buildMenu()
     {
+        $activeTrail = $this->menuActiveTrail->getActiveTrailIds('admin');
+
         // Build the typical default set of menu tree parameters.
         $parameters = new MenuTreeParameters();
         $parameters
             ->setRoot('system.admin')
+            ->setActiveTrail($activeTrail)
             ->excludeRoot()
             ->setMaxDepth(4)
             ->onlyEnabledLinks();
@@ -109,14 +118,5 @@ class EditorToolbarMenuBuilder
     {
         return $this->currentUser->hasPermission('access editor toolbar')
             && !$this->currentUser->hasPermission('access administration menu');
-    }
-
-    /**
-     * Check if the Wienimal theme is installed
-     * @return boolean
-     */
-    private function hasCustomal()
-    {
-        return $this->themeHandler->themeExists('customal');
     }
 }
