@@ -15,6 +15,7 @@ services:
             - '@menu.link_tree'
             - '@current_user'
             - '@theme_handler'
+            - '@menu.active_trail'
 
     wienimal_editor_toolbar.content_collector:
         class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarContentCollector
