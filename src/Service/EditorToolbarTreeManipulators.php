@@ -15,9 +15,9 @@ use Drupal\views\Plugin\Derivative\ViewsMenuLink;
 class EditorToolbarTreeManipulators
 {
     /** @var ConfigFactory */
-    private $configFactory;
+    protected $configFactory;
     /** @var ImmutableConfig */
-    private $config;
+    protected $config;
 
     public function __construct(
         ConfigFactory $configFactory
@@ -28,10 +28,8 @@ class EditorToolbarTreeManipulators
 
     /**
      * Remove certain unneeded menu items for editors
-     * @param array $tree
-     * @return array
      */
-    public function removeMenuItems(array $tree)
+    public function removeMenuItems(array $tree): array
     {
         foreach ($this->getMenuItemsToRemove() as $item) {
             $tree = $this->removeMenuItem($tree, $item);
@@ -42,18 +40,13 @@ class EditorToolbarTreeManipulators
 
     /**
      * Remove a menu item from a menu tree
-     * @param array $tree
-     * @param $item
-     * @return array
      */
-    public function removeMenuItem(array $tree, $item)
+    public function removeMenuItem(array $tree, string $item): array
     {
         menu_walk_recursive(
-        /**
-         * @param MenuLinkTreeElement $value
-         */
             $tree,
             function (&$value) use ($item) {
+                /** @var MenuLinkTreeElement $value */
                 if ($value->link->getPluginId() === $item) {
                     $value->access = AccessResult::forbidden();
                 }
@@ -65,10 +58,8 @@ class EditorToolbarTreeManipulators
 
     /**
      * Remove menu item and move subtree items to root
-     * @param array $tree
-     * @return array
      */
-    public function expandMenuItem(array $tree)
+    public function expandMenuItem(array $tree): array
     {
         $items = $this->getMenuItemsToExpand();
 
@@ -84,11 +75,6 @@ class EditorToolbarTreeManipulators
                     continue;
                 }
 
-                $link = $contentMenu[$menuItem]->link;
-                $link = $this->updateMenuLinkPluginDefinition($link, [
-                    'parent' => '',
-                ]);
-
                 $tree[$menuItem] = $contentMenu[$menuItem];
             }
 
@@ -100,10 +86,8 @@ class EditorToolbarTreeManipulators
 
     /**
      * Make the 'Add content' menu item not clickable
-     * @param array $tree
-     * @return array
      */
-    public function makeMenuItemsNotClickable(array $tree)
+    public function makeMenuItemsNotClickable(array $tree): array
     {
         $items = $this->getMenuItemsToMakeUnClickable();
 
@@ -129,10 +113,8 @@ class EditorToolbarTreeManipulators
 
     /**
      * Check if 'Content overview' and 'Add content' menu items have to be shown
-     * @param array $tree
-     * @return array
      */
-    public function checkCustomMenuItemsAccess(array $tree)
+    public function checkCustomMenuItemsAccess(array $tree): array
     {
         if (!$this->getShowContentOverview()) {
             $tree = $this->removeMenuItem($tree, 'wienimal_editor_toolbar.content_overview');
@@ -151,15 +133,17 @@ class EditorToolbarTreeManipulators
      * Make changes to the plugin definition of a menu link
      * @param MenuLinkDefault|ViewsMenuLink $link
      * @param array $newDefinition
-     * @return bool|MenuLinkDefault|ViewsMenuLink
+     * @return MenuLinkDefault|ViewsMenuLink|false
      */
-    private function updateMenuLinkPluginDefinition($link, array $newDefinition)
+    protected function updateMenuLinkPluginDefinition($link, array $newDefinition)
     {
         if ($link instanceof ViewsMenuLink) {
             $link->updateLink($newDefinition, false);
             return $link;
 
-        } elseif ($link instanceof MenuLinkInterface) {
+        }
+
+        if ($link instanceof MenuLinkInterface) {
             return new MenuLinkDefault(
                 [],
                 $link->getPluginId(),
@@ -171,38 +155,28 @@ class EditorToolbarTreeManipulators
         return false;
     }
 
-    /**
-     * @return boolean
-     */
-    private function getShowContentAdd() {
+    protected function getShowContentAdd(): bool
+    {
         return $this->config->get('show_combined_add_content') ?? false;
     }
 
-    /**
-     * @return boolean
-     */
-    private function getShowContentOverview() {
+    protected function getShowContentOverview(): bool
+    {
         return $this->config->get('show_combined_content_overview') ?? false;
     }
 
-    /**
-     * @return array
-     */
-    private function getMenuItemsToExpand() {
+    protected function getMenuItemsToExpand(): array
+    {
         return $this->config->get('menu_items.expand') ?? [];
     }
 
-    /**
-     * @return array
-     */
-    private function getMenuItemsToRemove() {
+    protected function getMenuItemsToRemove(): array
+    {
         return $this->config->get('menu_items.remove') ?? [];
     }
 
-    /**
-     * @return array
-     */
-    private function getMenuItemsToMakeUnClickable() {
+    protected function getMenuItemsToMakeUnClickable(): array
+    {
         return $this->config->get('menu_items.unclickable') ?? [];
     }
 }

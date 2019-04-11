@@ -10,22 +10,15 @@ use Drupal\Core\Session\AccountProxyInterface;
 
 class EditorToolbarMenuBuilder
 {
-    /** @var MenuLinkTreeInterface $menuTree */
+    /** @var MenuLinkTreeInterface */
     protected $menuTree;
-    /** @var AccountProxyInterface $currentUser */
+    /** @var AccountProxyInterface */
     protected $currentUser;
-    /** @var ThemeHandlerInterface $themeHandler */
+    /** @var ThemeHandlerInterface */
     protected $themeHandler;
-    /** @var MenuActiveTrailInterface $menuActiveTrail */
+    /** @var MenuActiveTrailInterface */
     protected $menuActiveTrail;
 
-    /**
-     * CleanToolbarMenuBuilder constructor.
-     * @param MenuLinkTreeInterface $menuTree
-     * @param AccountProxyInterface $currentUser
-     * @param ThemeHandlerInterface $themeHandler
-     * @param MenuActiveTrailInterface $menuActiveTrail
-     */
     public function __construct(
         MenuLinkTreeInterface $menuTree,
         AccountProxyInterface $currentUser,
@@ -44,12 +37,6 @@ class EditorToolbarMenuBuilder
             '#theme' => 'wienimal_editor_toolbar',
             '#links' => $this->buildMenu(),
             '#access' => $this->showToolbar(),
-            /*
-            '#cache' => [
-                'keys' => ['editbar'],
-                'contexts' => ['user.permissions'],
-            ],
-            */
             '#attached' => [
                 'library' => [
                     'wienimal_editor_toolbar/editbar-top',
@@ -60,18 +47,16 @@ class EditorToolbarMenuBuilder
 
     /**
      * Get the name of the menu
-     * @return string
      */
-    public function getMenuName()
+    public function getMenuName(): string
     {
         return 'admin';
     }
 
     /**
      * Load, transform and return the menu
-     * @return array
      */
-    public function buildMenu()
+    public function buildMenu(): array
     {
         $activeTrail = $this->menuActiveTrail->getActiveTrailIds('admin');
 
@@ -112,9 +97,8 @@ class EditorToolbarMenuBuilder
 
     /**
      * Check if the current user has permission to see the toolbar
-     * @return bool
      */
-    private function showToolbar()
+    private function showToolbar(): bool
     {
         return $this->currentUser->hasPermission('access editor toolbar')
             && !$this->currentUser->hasPermission('access administration menu');
