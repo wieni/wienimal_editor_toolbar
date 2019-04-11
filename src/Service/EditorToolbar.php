@@ -3,19 +3,15 @@
 namespace Drupal\wienimal_editor_toolbar\Service;
 
 use Drupal\Component\Serialization\Json;
-use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\ConfigFactoryInterface;
 
 class EditorToolbar
 {
-    /** @var array $config */
+    /** @var $config */
     protected $config;
 
-    /**
-     * WmContentDescriptiveTitles constructor.
-     * @param ConfigFactory $configFactory
-     */
     public function __construct(
-        ConfigFactory $configFactory
+        ConfigFactoryInterface $configFactory
     ) {
         $this->config = $configFactory->get('system.theme');
     }
