@@ -3,6 +3,3 @@ type: module
 description: "A toolbar built for editors, not developers."
 core: 8.x
 package: Wieni
-dependencies:
-  - node
-  - wienimal_services

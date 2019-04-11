@@ -134,22 +134,6 @@ class EditorToolbarTreeManipulators
      */
     public function checkCustomMenuItemsAccess(array $tree)
     {
-        if ($this->getShowOriginalTaxonomy()) {
-            // Change taxonomy weight
-            menu_walk_recursive(
-                $tree,
-                function (&$value) {
-                    if ($value->link->getPluginId() === 'entity.taxonomy_vocabulary.collection') {
-                        $value->link = $this->updateMenuLinkPluginDefinition($value->link, [
-                            'weight' => -9,
-                        ]);
-                    }
-                }
-            );
-        } else {
-            $tree = $this->removeMenuItem($tree, 'entity.taxonomy_vocabulary.collection');
-        }
-
         if (!$this->getShowContentOverview()) {
             $tree = $this->removeMenuItem($tree, 'wienimal_editor_toolbar.content_overview');
         }
@@ -202,30 +186,6 @@ class EditorToolbarTreeManipulators
     }
 
     /**
-     * @return boolean
-     */
-    private function getShowOriginalECK() {
-        $setting = $this->config->get('content.eck');
-        return $setting === 'none' || !$setting;
-    }
-
-    /**
-     * @return boolean
-     */
-    private function getShowOriginalNode() {
-        $setting = $this->config->get('content.node');
-        return $setting === 'none' || !$setting;
-    }
-
-    /**
-     * @return boolean
-     */
-    private function getShowOriginalTaxonomy() {
-        $setting = $this->config->get('content.taxonomy');
-        return $setting === 'none' || !$setting;
-    }
-
-    /**
      * @return array
      */
     private function getMenuItemsToExpand() {
@@ -244,14 +204,5 @@ class EditorToolbarTreeManipulators
      */
     private function getMenuItemsToMakeUnClickable() {
         return $this->config->get('menu_items.unclickable') ?? [];
-    }
-
-    /**
-     * @param MenuLinkTreeElement $value
-     * @return string
-     */
-    private function getMenuIconClass($value)
-    {
-        return 'menu-' . str_replace('.', '_', $value->link->getPluginId());
     }
 }

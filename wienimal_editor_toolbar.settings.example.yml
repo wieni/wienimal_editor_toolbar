@@ -3,19 +3,15 @@ show_combined_content_overview: true
 show_combined_add_content: true
 content:
   node: all
-  taxonomy: all
-  eck:
-    collection:
-      - vat
-      - client_type
-      - country
-custom_routes:
-  overview:
-    eck:
-      collection:
-        vat: view.vats.page_1
-        country: view.countries.page_1
-        client_type: view.client_types.page_1
+  taxonomy:
+    tag: true
+  collection:
+    vat:
+      route_name: view.vats.page_1
+    client_type:
+      route_name: view.client_types.page_1
+    country:
+      route_name: view.countries.page_1
 menu_items:
   expand:
     - system.admin_content

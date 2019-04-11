@@ -1,6 +1,6 @@
 {
   "name": "wieni/wienimal_editor_toolbar",
-  "description": "A toolbar build for editors, not developers.",
+  "description": "A toolbar built for editors, not developers.",
   "license": "MIT",
   "authors": [
     {
@@ -10,8 +10,5 @@
   ],
   "minimum-stability": "dev",
   "prefer-stable": true,
-  "type": "drupal-module",
-  "require": {
-    "wieni/wienimal_services": "dev-release/v3"
-  }
+  "type": "drupal-module"
 }

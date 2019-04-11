@@ -3,33 +3,56 @@
 namespace Drupal\wienimal_editor_toolbar\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\wienimal_editor_toolbar\Service\EditorToolbarContentCollector;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class ContentAddMenuItem extends DeriverBase implements ContainerDeriverInterface
+class ContentAddMenuItem extends ContentMenuItem
 {
-    /** @var EditorToolbarContentCollector $contentCollector */
-    private $contentCollector;
-
-    /**
-     * ContentOverviewMenuItem constructor.
-     * @param EditorToolbarContentCollector $contentCollector
-     */
-    public function __construct(EditorToolbarContentCollector $contentCollector)
+    protected function getRoute(EntityTypeInterface $entityType, string $bundle): array
     {
-        $this->contentCollector = $contentCollector;
-    }
+        if ($entityType->getProvider() === 'eck') {
+            return [
+                'route_name' => 'eck.entity.add',
+                'route_parameters' => [
+                    'eck_entity_type' => $entityType->id(),
+                    'eck_entity_bundle' => $bundle,
+                ],
+            ];
+        }
 
-    public static function create(ContainerInterface $container, $base_plugin_id)
-    {
-        return new static(
-            $container->get('wienimal_editor_toolbar.content_collector')
-        );
-    }
+        if ($entityType->id() === 'taxonomy_term') {
+            return [
+                'route_name' => 'entity.taxonomy_term.add_form',
+                'route_parameters' => [
+                    $entityType->getBundleEntityType() => $bundle,
+                ],
+            ];
+        }
 
-    public function getDerivativeDefinitions($basePluginDefinition)
-    {
-        return $this->contentCollector->getCreateMenu($basePluginDefinition);
+        if ($entityType->id() === 'node') {
+            return [
+                'route_name' => 'node.add',
+                'route_parameters' => [
+                    $entityType->getBundleEntityType() => $bundle,
+                ],
+            ];
+        }
+
+        foreach (['add-form', 'add-page'] as $linkTemplate) {
+            if ($entityType->hasLinkTemplate($linkTemplate)) {
+                return [
+                    'route_name' => "entity.{$entityType->id()}.{$linkTemplate}",
+                    'route_parameters' => [
+                        'entity_type_id' => $entityType->id(),
+                    ],
+                ];
+            }
+        }
+
+        return [
+            'route_name' => '<nolink>',
+        ];
     }
 }

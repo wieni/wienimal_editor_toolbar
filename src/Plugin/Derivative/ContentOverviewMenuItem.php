@@ -2,34 +2,39 @@
 
 namespace Drupal\wienimal_editor_toolbar\Plugin\Derivative;
 
-use Drupal\Component\Plugin\Derivative\DeriverBase;
-use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
-use Drupal\wienimal_editor_toolbar\Service\EditorToolbarContentCollector;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 
-class ContentOverviewMenuItem extends DeriverBase implements ContainerDeriverInterface
+class ContentOverviewMenuItem extends ContentMenuItem
 {
-    /** @var EditorToolbarContentCollector $contentCollector */
-    private $contentCollector;
-
-    /**
-     * ContentOverviewMenuItem constructor.
-     * @param EditorToolbarContentCollector $contentCollector
-     */
-    public function __construct(EditorToolbarContentCollector $contentCollector)
+    protected function getRoute(EntityTypeInterface $entityType, string $bundle): array
     {
-        $this->contentCollector = $contentCollector;
-    }
+        if ($entityType->getProvider() === 'eck') {
+            return [
+                'route_name' => "eck.entity.{$entityType->id()}.list",
+                'route_parameters' => [],
+            ];
+        }
 
-    public static function create(ContainerInterface $container, $base_plugin_id)
-    {
-        return new static(
-            $container->get('wienimal_editor_toolbar.content_collector')
-        );
-    }
+        if ($entityType->id() === 'taxonomy_term') {
+            return [
+                'route_name' => 'entity.taxonomy_vocabulary.overview_form',
+                'route_parameters' => [
+                    $entityType->getBundleEntityType() => $bundle,
+                ],
+            ];
+        }
 
-    public function getDerivativeDefinitions($basePluginDefinition)
-    {
-        return $this->contentCollector->getOverviewMenu($basePluginDefinition);
+        if ($bundleKey = $entityType->getKey('bundle')) {
+            return [
+                'route_name' => 'system.admin_content',
+                'route_parameters' => [
+                    $entityType->getKey('bundle') => $bundle,
+                ],
+            ];
+        }
+
+        return [
+            'route_name' => 'system.admin_content',
+        ];
     }
 }

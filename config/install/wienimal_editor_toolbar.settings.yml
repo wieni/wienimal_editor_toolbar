@@ -5,12 +5,7 @@ show_combined_add_content: false
 
 content:
   node: all
-  taxonomy: all
-  eck: none
-
-custom_routes:
-  create:
-  overview:
+  taxonomy_term: all
 
 menu_items:
   expand:
