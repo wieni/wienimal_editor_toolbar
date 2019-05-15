@@ -3,6 +3,7 @@
 namespace Drupal\wienimal_editor_toolbar\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -44,12 +45,10 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
         $menu = [];
 
         foreach ($config->get('content') as $entityTypeId => $bundleValues) {
-            $definition = $this->entityTypeManager->getDefinition($entityTypeId);
-
-            if (!$definition instanceof EntityTypeInterface) {
-                throw new \UnexpectedValueException(
-                    sprintf('%s is not a valid entity type.', $entityTypeId)
-                );
+            try {
+                $definition = $this->entityTypeManager->getDefinition($entityTypeId);
+            } catch (PluginNotFoundException $e) {
+                continue;
             }
 
             $bundles = $this->entityTypeBundleInfo->getBundleInfo($entityTypeId);
