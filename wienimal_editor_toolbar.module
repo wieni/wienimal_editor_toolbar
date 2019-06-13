@@ -112,6 +112,12 @@ function wmcustom_menu_links_discovered_alter(array &$links)
     }
 }
 
+function wienimal_editor_toolbar_locale_translation_projects_alter(&$projects)
+{
+    $path = drupal_get_path('module', 'wienimal_editor_toolbar') . '/translations/%language.po';
+    $projects['wienimal_editor_toolbar']['info']['interface translation server pattern'] = $path;
+}
+
 /**
  * Apply a user function to every item of a menu tree
  * @param $value
