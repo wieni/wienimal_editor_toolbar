@@ -4,3 +4,6 @@ description: "A toolbar built for editors, not developers."
 core: 8.x
 package: Wieni
 version: 3.0.2
+
+interface translation project: wienimal_editor_toolbar
+interface translation server pattern: https://github.com/wieni/%project/blob/%version/translations/%language.po
