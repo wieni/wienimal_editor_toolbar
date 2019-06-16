@@ -2,11 +2,17 @@
 
 namespace Drupal\wienimal_editor_toolbar\Service;
 
+use Drupal;
 use Drupal\Core\Extension\ThemeHandlerInterface;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Menu\MenuActiveTrailInterface;
 use Drupal\Core\Menu\MenuLinkTreeInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslationManager;
+use Drupal\language\ConfigurableLanguageManagerInterface;
+use Drupal\language\LanguageNegotiatorInterface;
 
 class EditorToolbarMenuBuilder
 {
@@ -18,21 +24,38 @@ class EditorToolbarMenuBuilder
     protected $themeHandler;
     /** @var MenuActiveTrailInterface */
     protected $menuActiveTrail;
+    /** @var LanguageManagerInterface */
+    protected $languageManager;
+    /** @var TranslationManager */
+    protected $translationManager;
+
+    /** @var LanguageNegotiatorInterface **/
+    protected $originalNegotiator;
+    /** @var EditorToolbarLanguageNegotiator **/
+    protected $customNegotiator;
 
     public function __construct(
         MenuLinkTreeInterface $menuTree,
         AccountProxyInterface $currentUser,
         ThemeHandlerInterface $themeHandler,
-        MenuActiveTrailInterface $menuActiveTrail
+        MenuActiveTrailInterface $menuActiveTrail,
+        LanguageManagerInterface $languageManager,
+        TranslationManager $translationManager,
+        EditorToolbarLanguageNegotiator $customNegotiator
     ) {
         $this->menuTree = $menuTree;
         $this->currentUser = $currentUser;
         $this->themeHandler = $themeHandler;
         $this->menuActiveTrail = $menuActiveTrail;
+        $this->languageManager = $languageManager;
+        $this->translationManager = $translationManager;
+        $this->customNegotiator = $customNegotiator;
     }
 
     public function buildPageTop(array &$page_top)
     {
+        $this->switchToUserAdminLanguage();
+
         $page_top['wienimal_editor_toolbar'] = [
             '#theme' => 'wienimal_editor_toolbar',
             '#links' => $this->buildMenu(),
@@ -43,6 +66,8 @@ class EditorToolbarMenuBuilder
                 ],
             ],
         ];
+
+        $this->restoreLanguage();
     }
 
     /**
@@ -102,5 +127,34 @@ class EditorToolbarMenuBuilder
     {
         return $this->currentUser->hasPermission('access editor toolbar')
             && !$this->currentUser->hasPermission('access administration menu');
+    }
+
+    protected function switchToUserAdminLanguage()
+    {
+        if (!$this->languageManager instanceof ConfigurableLanguageManagerInterface) {
+            return;
+        }
+
+        $this->originalNegotiator = $this->languageManager->getNegotiator();
+        $this->languageManager->setNegotiator($this->customNegotiator);
+        $adminLangcode = $this->languageManager
+            ->reset(LanguageInterface::TYPE_INTERFACE)
+            ->getCurrentLanguage(LanguageInterface::TYPE_INTERFACE)
+            ->getId();
+        $this->translationManager->setDefaultLangcode($adminLangcode);
+    }
+
+    protected function restoreLanguage()
+    {
+        if (!$this->languageManager instanceof ConfigurableLanguageManagerInterface) {
+            return;
+        }
+
+        $this->languageManager->setNegotiator($this->originalNegotiator);
+        $adminLangcode = $this->languageManager
+            ->reset(LanguageInterface::TYPE_INTERFACE)
+            ->getCurrentLanguage(LanguageInterface::TYPE_INTERFACE)
+            ->getId();
+        $this->translationManager->setDefaultLangcode($adminLangcode);
     }
 }
