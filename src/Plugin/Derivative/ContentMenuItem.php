@@ -5,10 +5,10 @@ namespace Drupal\wienimal_editor_toolbar\Plugin\Derivative;
 use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
+use Drupal\wienimal_editor_toolbar\TranslatableEntityLabelMarkup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverInterface
@@ -17,25 +17,20 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
     protected $configFactory;
     /** @var EntityTypeManagerInterface */
     protected $entityTypeManager;
-    /** @var EntityTypeBundleInfoInterface */
-    protected $entityTypeBundleInfo;
 
     public function __construct(
         ConfigFactoryInterface $configFactory,
-        EntityTypeManagerInterface $entityTypeManager,
-        EntityTypeBundleInfoInterface $entityTypeBundleInfo
+        EntityTypeManagerInterface $entityTypeManager
     ) {
         $this->configFactory = $configFactory;
         $this->entityTypeManager = $entityTypeManager;
-        $this->entityTypeBundleInfo = $entityTypeBundleInfo;
     }
 
     public static function create(ContainerInterface $container, $base_plugin_id)
     {
         return new static(
             $container->get('config.factory'),
-            $container->get('entity_type.manager'),
-            $container->get('entity_type.bundle.info')
+            $container->get('entity_type.manager')
         );
     }
 
@@ -51,7 +46,7 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
                 continue;
             }
 
-            $bundles = $this->entityTypeBundleInfo->getBundleInfo($entityTypeId);
+            $bundles = $this->getBundleInfo($definition);
 
             if (is_array($bundleValues)) {
                 $bundles = array_intersect_key($bundles, $bundleValues);
@@ -78,6 +73,19 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
         }
 
         return $menu;
+    }
+
+    protected function getBundleInfo(EntityTypeInterface $entityType): array
+    {
+        $bundles = [];
+
+        if ($bundleEntityType = $entityType->getBundleEntityType()) {
+            foreach ($this->entityTypeManager->getStorage($bundleEntityType)->loadMultiple() as $entity) {
+                $bundles[$entity->id()]['label'] = new TranslatableEntityLabelMarkup($entity->getEntityTypeId(), $entity->id());
+            }
+        }
+
+        return $bundles;
     }
 
     abstract protected function getRoute(EntityTypeInterface $entityType, string $bundle): array;
