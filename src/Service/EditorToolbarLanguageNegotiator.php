@@ -36,7 +36,7 @@ class EditorToolbarLanguageNegotiator extends LanguageNegotiator
 
         if (
             $type === LanguageInterface::TYPE_INTERFACE
-            && ($adminLangcode = $this->currentUser->getPreferredAdminLangcode())
+            && ($adminLangcode = $this->currentUser->getPreferredAdminLangcode(false))
             && $this->currentUser->hasPermission('access administration pages')
         ) {
             $language = $this->languageManager->getLanguage($adminLangcode);
