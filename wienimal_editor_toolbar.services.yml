@@ -18,14 +18,5 @@ services:
             - '@menu.active_trail'
             - '@language_manager'
             - '@string_translation'
-            - '@wienimal_editor_toolbar.language_negotiator'
-
-    wienimal_editor_toolbar.language_negotiator:
-        class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarLanguageNegotiator
-        arguments:
-            - '@language_manager'
-            - '@plugin.manager.language_negotiation_method'
-            - '@config.factory'
-            - '@settings'
-            - '@request_stack'
-            - '@current_user'
+        calls:
+            - [setLanguageNegotiator, ['@?wienimal_editor_toolbar.language_negotiator']]

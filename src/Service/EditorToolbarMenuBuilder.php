@@ -2,7 +2,6 @@
 
 namespace Drupal\wienimal_editor_toolbar\Service;
 
-use Drupal;
 use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -40,8 +39,7 @@ class EditorToolbarMenuBuilder
         ThemeHandlerInterface $themeHandler,
         MenuActiveTrailInterface $menuActiveTrail,
         LanguageManagerInterface $languageManager,
-        TranslationManager $translationManager,
-        EditorToolbarLanguageNegotiator $customNegotiator
+        TranslationManager $translationManager
     ) {
         $this->menuTree = $menuTree;
         $this->currentUser = $currentUser;
@@ -49,7 +47,11 @@ class EditorToolbarMenuBuilder
         $this->menuActiveTrail = $menuActiveTrail;
         $this->languageManager = $languageManager;
         $this->translationManager = $translationManager;
-        $this->customNegotiator = $customNegotiator;
+    }
+
+    public function setLanguageNegotiator(EditorToolbarLanguageNegotiator $languageNegotiator)
+    {
+        $this->customNegotiator = $languageNegotiator;
     }
 
     public function buildPageTop(array &$page_top)
@@ -131,7 +133,10 @@ class EditorToolbarMenuBuilder
 
     protected function switchToUserAdminLanguage()
     {
-        if (!$this->languageManager instanceof ConfigurableLanguageManagerInterface) {
+        if (
+            !isset($this->customNegotiator)
+            || !$this->languageManager instanceof ConfigurableLanguageManagerInterface
+        ) {
             return;
         }
 
@@ -146,7 +151,10 @@ class EditorToolbarMenuBuilder
 
     protected function restoreLanguage()
     {
-        if (!$this->languageManager instanceof ConfigurableLanguageManagerInterface) {
+        if (
+            !isset($this->customNegotiator)
+            || !$this->languageManager instanceof ConfigurableLanguageManagerInterface
+        ) {
             return;
         }
 
