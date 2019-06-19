@@ -6,6 +6,7 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceModifierInterface;
 use Drupal\wienimal_editor_toolbar\Service\EditorToolbarLanguageNegotiator;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 class WienimalEditorToolbarServiceProvider implements ServiceModifierInterface
 {
@@ -18,12 +19,12 @@ class WienimalEditorToolbarServiceProvider implements ServiceModifierInterface
             $container->setDefinition(
                 'wienimal_editor_toolbar.language_negotiator',
                 new Definition(EditorToolbarLanguageNegotiator::class, [
-                    'language_manager',
-                    'plugin.manager.language_negotiation_method',
-                    'config.factory',
-                    'settings',
-                    'request_stack',
-                    'current_user',
+                    new Reference('language_manager'),
+                    new Reference('plugin.manager.language_negotiation_method'),
+                    new Reference('config.factory'),
+                    new Reference('settings'),
+                    new Reference('request_stack'),
+                    new Reference('current_user'),
                 ])
             );
         }

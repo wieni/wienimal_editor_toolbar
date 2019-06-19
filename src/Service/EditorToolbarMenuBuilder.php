@@ -11,6 +11,7 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\language\ConfigurableLanguageManagerInterface;
+use Drupal\language\LanguageNegotiator;
 use Drupal\language\LanguageNegotiatorInterface;
 
 class EditorToolbarMenuBuilder
@@ -30,6 +31,8 @@ class EditorToolbarMenuBuilder
 
     /** @var LanguageNegotiatorInterface **/
     protected $originalNegotiator;
+    /** @var LanguageNegotiator **/
+    protected $defaultNegotiator;
     /** @var EditorToolbarLanguageNegotiator **/
     protected $customNegotiator;
 
@@ -49,7 +52,12 @@ class EditorToolbarMenuBuilder
         $this->translationManager = $translationManager;
     }
 
-    public function setLanguageNegotiator(EditorToolbarLanguageNegotiator $languageNegotiator)
+    public function setDefaultLanguageNegotiator(LanguageNegotiator $languageNegotiator)
+    {
+        $this->defaultNegotiator = $languageNegotiator;
+    }
+
+    public function setCustomLanguageNegotiator(EditorToolbarLanguageNegotiator $languageNegotiator)
     {
         $this->customNegotiator = $languageNegotiator;
     }
@@ -158,7 +166,7 @@ class EditorToolbarMenuBuilder
             return;
         }
 
-        $this->languageManager->setNegotiator($this->originalNegotiator);
+        $this->languageManager->setNegotiator($this->originalNegotiator ?? $this->defaultNegotiator);
         $adminLangcode = $this->languageManager
             ->reset(LanguageInterface::TYPE_INTERFACE)
             ->getCurrentLanguage(LanguageInterface::TYPE_INTERFACE)

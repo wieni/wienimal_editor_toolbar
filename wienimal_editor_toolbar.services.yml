@@ -19,4 +19,5 @@ services:
             - '@language_manager'
             - '@string_translation'
         calls:
-            - [setLanguageNegotiator, ['@?wienimal_editor_toolbar.language_negotiator']]
+            - [setDefaultLanguageNegotiator, ['@?language_negotiator']]
+            - [setCustomLanguageNegotiator, ['@?wienimal_editor_toolbar.language_negotiator']]
