@@ -79,7 +79,7 @@ function wienimal_editor_toolbar_theme_registry_alter(&$theme_registry)
  *
  * @see \Drupal\wienimal_editor_toolbar\Plugin\Derivative\ContentMenuItem
  */
-function wmcustom_menu_links_discovered_alter(array &$links)
+function wienimal_editor_toolbar_menu_links_discovered_alter(array &$links)
 {
     if (!\Drupal::moduleHandler()->moduleExists('wmsingles')) {
         return;
