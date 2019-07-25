@@ -2,11 +2,7 @@
 
 namespace Drupal\wienimal_editor_toolbar\Plugin\Derivative;
 
-use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
-use Drupal\wienimal_editor_toolbar\Service\EditorToolbarContentCollector;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ContentAddMenuItem extends ContentMenuItem
 {
