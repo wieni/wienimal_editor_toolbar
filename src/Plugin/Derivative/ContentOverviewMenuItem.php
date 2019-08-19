@@ -12,6 +12,11 @@ class ContentOverviewMenuItem extends ContentMenuItem
             return [
                 'route_name' => "eck.entity.{$entityType->id()}.list",
                 'route_parameters' => [],
+                'options' => [
+                    'query' => [
+                        'type' => $bundle,
+                    ]
+                ]
             ];
         }
 

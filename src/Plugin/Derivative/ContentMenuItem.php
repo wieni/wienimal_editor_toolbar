@@ -64,11 +64,9 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
                 $route = $info['route'] ?? $this->getRoute($definition, $bundle);
 
                 $menu[$id] = [
-                    'id' => $id,
-                    'title' => $info['label'],
-                    'route_name' => $route['route_name'],
-                    'route_parameters' => $route['route_parameters'] ?? [],
-                ] + $basePluginDefinition;
+                        'id' => $id,
+                        'title' => $info['label'],
+                    ] + $route + $basePluginDefinition;
             }
         }
 
