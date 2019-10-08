@@ -14,6 +14,12 @@ function wienimal_editor_toolbar_theme($existing, $type, $theme, $path)
                 'links' => [],
             ],
         ],
+        'wienimal_editor_toolbar_menu' => [
+            'variables' => [
+                'menu_name' => [],
+                'items' => [],
+            ],
+        ],
     ];
 }
 
@@ -24,14 +30,6 @@ function wienimal_editor_toolbar_theme($existing, $type, $theme, $path)
 function wienimal_editor_toolbar_page_top(array &$page_top)
 {
     Drupal::service('wienimal_editor_toolbar.menu_builder')->buildPageTop($page_top);
-}
-
-/**
- * Implements hook_preprocess().
- */
-function wienimal_editor_toolbar_preprocess_menu__admin(&$variables, $hook)
-{
-    $variables['attributes']['class'][] = 'nav';
 }
 
 /**
@@ -60,14 +58,6 @@ function wienimal_editor_toolbar_template_preprocess_default_variables_alter(&$v
         $user = $variables['user']->getAccount();
         $variables['username'] = $user->getDisplayName();
     }
-}
-
-/**
- * Implements hook_theme_registry_alter().
- */
-function wienimal_editor_toolbar_theme_registry_alter(&$theme_registry)
-{
-    $theme_registry['menu__admin']['path'] = drupal_get_path('module', 'wienimal_editor_toolbar') . '/templates';
 }
 
 /**

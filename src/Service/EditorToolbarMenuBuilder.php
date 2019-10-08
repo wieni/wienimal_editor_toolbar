@@ -80,12 +80,21 @@ class EditorToolbarMenuBuilder
         $this->restoreLanguage();
     }
 
-    /**
-     * Get the name of the menu
-     */
-    public function getMenuName(): string
+    protected function getMenuName(): string
     {
         return 'admin';
+    }
+
+    protected function getMenuTreeParameters(): MenuTreeParameters
+    {
+        $activeTrail = $this->menuActiveTrail->getActiveTrailIds('admin');
+
+        return (new MenuTreeParameters)
+            ->setRoot('system.admin')
+            ->setActiveTrail($activeTrail)
+            ->excludeRoot()
+            ->setMaxDepth(4)
+            ->onlyEnabledLinks();
     }
 
     /**
@@ -93,19 +102,7 @@ class EditorToolbarMenuBuilder
      */
     public function buildMenu(): array
     {
-        $activeTrail = $this->menuActiveTrail->getActiveTrailIds('admin');
-
-        // Build the typical default set of menu tree parameters.
-        $parameters = new MenuTreeParameters();
-        $parameters
-            ->setRoot('system.admin')
-            ->setActiveTrail($activeTrail)
-            ->excludeRoot()
-            ->setMaxDepth(4)
-            ->onlyEnabledLinks();
-
-        // Load the tree based on this set of parameters.
-        $tree = $this->menuTree->load($this->getMenuName(), $parameters);
+        $tree = $this->menuTree->load($this->getMenuName(), $this->getMenuTreeParameters());
 
         // Transform the tree using the manipulators you want.
         $manipulators = [
