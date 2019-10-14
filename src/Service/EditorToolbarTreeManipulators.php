@@ -108,6 +108,33 @@ class EditorToolbarTreeManipulators
     }
 
     /**
+     * Remove menu links without link and without children
+     */
+    public function removeEmptyMenuItems(array $tree): array
+    {
+        menu_walk_recursive(
+            $tree,
+            function (MenuLinkTreeElement $value, string $key) use ($tree) {
+                $children = array_filter(
+                    $value->subtree,
+                    function (MenuLinkTreeElement $treeElement) {
+                        return $treeElement->access->isAllowed();
+                    }
+                );
+
+                if (
+                    in_array($value->link->getRouteName(), ['<nolink>', '<none>'])
+                    && empty($children)
+                ) {
+                    $this->removeMenuItem($tree, $key);
+                }
+            }
+        );
+
+        return $tree;
+    }
+
+    /**
      * Check if 'Content overview' and 'Add content' menu items have to be shown
      */
     public function checkCustomMenuItemsAccess(array $tree): array

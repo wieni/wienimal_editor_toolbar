@@ -122,6 +122,8 @@ class EditorToolbarMenuBuilder
             ['callable' => 'wienimal_editor_toolbar.tree_manipulators:removeMenuItems'],
             // Make certain menu items not clickable
             ['callable' => 'wienimal_editor_toolbar.tree_manipulators:makeMenuItemsNotClickable'],
+            // Remove menu links without link and without children
+            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:removeEmptyMenuItems'],
             // Use the default sorting of menu links.
             ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
         ];
