@@ -2,24 +2,24 @@
 
 namespace Drupal\wienimal_editor_toolbar\Service;
 
-use Drupal\Component\Serialization\Json;
 use Drupal\Core\Config\ConfigFactoryInterface;
 
 class EditorToolbar
 {
-    /** @var $config */
-    protected $config;
+	/** @var ConfigFactoryInterface */
+	protected $configFactory;
 
     public function __construct(
-        ConfigFactoryInterface $configFactory
+		ConfigFactoryInterface $configFactory
     ) {
-        $this->config = $configFactory->get('system.theme');
+		$this->configFactory = $configFactory;
     }
 
     public function getLogo()
     {
-        $adminTheme = drupal_get_path('theme', $this->config->get('admin'));
-        $activeTheme = drupal_get_path('theme', $this->config->get('default'));
+		$themeConfig = $this->configFactory->get('system.theme');
+		$adminTheme = drupal_get_path('theme', $themeConfig->get('admin'));
+		$activeTheme = drupal_get_path('theme', $themeConfig->get('default'));
         $module = drupal_get_path('module', 'wienimal_editor_toolbar');
 
         $possibilities = array_reduce(
@@ -56,7 +56,7 @@ class EditorToolbar
         $path = DRUPAL_ROOT . '/version.json';
 
         if (file_exists($path)) {
-            return Json::decode(file_get_contents($path));
+			return json_decode(file_get_contents($path), true);
         }
 
         return false;
