@@ -2,6 +2,7 @@
 
 namespace Drupal\wienimal_editor_toolbar\Service;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -28,6 +29,8 @@ class EditorToolbarMenuBuilder
     protected $languageManager;
     /** @var TranslationManager */
     protected $translationManager;
+	/** @var ConfigFactoryInterface */
+	protected $configFactory;
 
     /** @var LanguageNegotiatorInterface **/
     protected $originalNegotiator;
@@ -42,7 +45,8 @@ class EditorToolbarMenuBuilder
         ThemeHandlerInterface $themeHandler,
         MenuActiveTrailInterface $menuActiveTrail,
         LanguageManagerInterface $languageManager,
-        TranslationManager $translationManager
+        TranslationManager $translationManager,
+		ConfigFactoryInterface $configFactory
     ) {
         $this->menuTree = $menuTree;
         $this->currentUser = $currentUser;
@@ -50,6 +54,7 @@ class EditorToolbarMenuBuilder
         $this->menuActiveTrail = $menuActiveTrail;
         $this->languageManager = $languageManager;
         $this->translationManager = $translationManager;
+		$this->configFactory = $configFactory;
     }
 
     public function setDefaultLanguageNegotiator(LanguageNegotiator $languageNegotiator)
@@ -82,15 +87,16 @@ class EditorToolbarMenuBuilder
 
     protected function getMenuName(): string
     {
-        return 'admin';
+		return $this->configFactory->get('wienimal_editor_toolbar.settings')->get('menu') ?? 'admin';
     }
 
     protected function getMenuTreeParameters(): MenuTreeParameters
     {
-        $activeTrail = $this->menuActiveTrail->getActiveTrailIds('admin');
+		$rootMenuLink = $this->configFactory->get('wienimal_editor_toolbar.settings')->get('root_menu_link') ?? 'system.admin';
+		$activeTrail = $this->menuActiveTrail->getActiveTrailIds('admin');
 
         return (new MenuTreeParameters)
-            ->setRoot('system.admin')
+            ->setRoot($rootMenuLink)
             ->setActiveTrail($activeTrail)
             ->excludeRoot()
             ->setMaxDepth(4)

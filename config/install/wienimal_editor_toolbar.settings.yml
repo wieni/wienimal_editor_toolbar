@@ -1,3 +1,5 @@
+menu: admin
+root_menu_link: system.admin
 show_version_info: true
 show_logo: true
 show_combined_content_overview: false
