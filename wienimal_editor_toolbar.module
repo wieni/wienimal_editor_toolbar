@@ -107,32 +107,3 @@ function wienimal_editor_toolbar_locale_translation_projects_alter(&$projects)
     $path = drupal_get_path('module', 'wienimal_editor_toolbar') . '/translations/%language.po';
     $projects['wienimal_editor_toolbar']['info']['interface translation server pattern'] = $path;
 }
-
-/**
- * Apply a user function to every item of a menu tree
- * @param $value
- * @param $key
- * @param $callback
- */
-function menu_walk_recursive_handler(&$value, $key, $callback)
-{
-    if (is_array($value)) {
-        array_walk($value, 'menu_walk_recursive_handler', $callback);
-    } else {
-        $callback($value);
-
-        if (!empty($value->subtree)) {
-            array_walk($value->subtree, 'menu_walk_recursive_handler', $callback);
-        }
-    }
-}
-
-/**
- * Callback function for menu_walk_recursive_handler
- * @param array $tree
- * @param $callback
- */
-function menu_walk_recursive(array $tree, $callback)
-{
-    array_walk($tree,'menu_walk_recursive_handler', $callback);
-}

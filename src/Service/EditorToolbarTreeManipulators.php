@@ -39,7 +39,7 @@ class EditorToolbarTreeManipulators
      */
     public function removeMenuItem(array $tree, string $item): array
     {
-        menu_walk_recursive(
+        self::walkTreeRecursive(
             $tree,
             function (&$value) use ($item) {
                 /** @var MenuLinkTreeElement $value */
@@ -87,7 +87,7 @@ class EditorToolbarTreeManipulators
     {
         $items = $this->getMenuItemsToMakeUnClickable();
 
-        menu_walk_recursive(
+        self::walkTreeRecursive(
             $tree,
             function (&$value) use ($items) {
                 if (
@@ -112,7 +112,7 @@ class EditorToolbarTreeManipulators
      */
     public function removeEmptyMenuItems(array $tree): array
     {
-        menu_walk_recursive(
+        self::walkTreeRecursive(
             $tree,
             function (MenuLinkTreeElement $value, string $key) use ($tree) {
                 $children = array_filter(
@@ -150,6 +150,37 @@ class EditorToolbarTreeManipulators
         }
 
         return $tree;
+    }
+
+    /**
+     * Apply a user function to every item of a menu tree
+     *
+     * @param MenuLinkTreeElement|MenuLinkTreeElement[] $tree
+     * @param callable $callback
+     * @return void
+     */
+    protected static function walkTreeRecursive(array $tree, callable $callback)
+    {
+        array_walk($tree, [self::class, 'walkTreeRecursiveHandler'], $callback);
+    }
+
+    /**
+     * @param MenuLinkTreeElement|MenuLinkTreeElement[] $value
+     * @param string $key
+     * @param callable $callback
+     * @return void
+     */
+    protected static function walkTreeRecursiveHandler($value, string $key, callable $callback)
+    {
+        if (is_array($value)) {
+            array_walk($value, [self::class, 'walkTreeRecursiveHandler'], $callback);
+            return;
+        }
+
+        if ($value instanceof MenuLinkTreeElement) {
+            $callback($value, $key);
+            array_walk($value->subtree, [self::class, 'walkTreeRecursiveHandler'], $callback);
+        }
     }
 
     /**
