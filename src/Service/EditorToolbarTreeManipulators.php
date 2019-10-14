@@ -3,8 +3,7 @@
 namespace Drupal\wienimal_editor_toolbar\Service;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Config\ConfigFactory;
-use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Menu\InaccessibleMenuLink;
 use Drupal\Core\Menu\MenuLinkDefault;
 use Drupal\Core\Menu\MenuLinkInterface;
@@ -14,16 +13,13 @@ use Drupal\views\Plugin\Derivative\ViewsMenuLink;
 
 class EditorToolbarTreeManipulators
 {
-    /** @var ConfigFactory */
+    /** @var ConfigFactoryInterface */
     protected $configFactory;
-    /** @var ImmutableConfig */
-    protected $config;
 
     public function __construct(
-        ConfigFactory $configFactory
+		ConfigFactoryInterface $configFactory
     ) {
         $this->configFactory = $configFactory;
-        $this->config = $this->configFactory->get('wienimal_editor_toolbar.settings');
     }
 
     /**
@@ -157,26 +153,31 @@ class EditorToolbarTreeManipulators
 
     protected function getShowContentAdd(): bool
     {
-        return $this->config->get('show_combined_add_content') ?? false;
+        return $this->getConfigValue('show_combined_add_content');
     }
 
     protected function getShowContentOverview(): bool
     {
-        return $this->config->get('show_combined_content_overview') ?? false;
+        return $this->getConfigValue('show_combined_content_overview');
     }
 
     protected function getMenuItemsToExpand(): array
     {
-        return $this->config->get('menu_items.expand') ?? [];
+        return $this->getConfigValue('menu_items.expand');
     }
 
     protected function getMenuItemsToRemove(): array
     {
-        return $this->config->get('menu_items.remove') ?? [];
+        return $this->getConfigValue('menu_items.remove');
     }
 
     protected function getMenuItemsToMakeUnClickable(): array
     {
-        return $this->config->get('menu_items.unclickable') ?? [];
+        return $this->getConfigValue('menu_items.unclickable');
+    }
+
+    protected function getConfigValue(string $key)
+    {
+        return $this->configFactory->get('wienimal_editor_toolbar.settings')->get($key);
     }
 }

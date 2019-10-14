@@ -87,12 +87,12 @@ class EditorToolbarMenuBuilder
 
     protected function getMenuName(): string
     {
-		return $this->configFactory->get('wienimal_editor_toolbar.settings')->get('menu') ?? 'admin';
+		return $this->configFactory->get('wienimal_editor_toolbar.settings')->get('menu');
     }
 
     protected function getMenuTreeParameters(): MenuTreeParameters
     {
-		$rootMenuLink = $this->configFactory->get('wienimal_editor_toolbar.settings')->get('root_menu_link') ?? 'system.admin';
+		$rootMenuLink = $this->configFactory->get('wienimal_editor_toolbar.settings')->get('root_menu_link');
 		$activeTrail = $this->menuActiveTrail->getActiveTrailIds('admin');
 
         return (new MenuTreeParameters)

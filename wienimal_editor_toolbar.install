@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * Make sure all config keys have default values
+ */
+function wienimal_editor_toolbar_update_8002()
+{
+    $config = \Drupal::configFactory()->getEditable('wienimal_editor_toolbar.settings');
+    $defaults = [
+        'menu' => 'admin',
+        'root_menu_link' => 'system.admin',
+        'show_version_info' => true,
+        'show_logo' => true,
+        'show_combined_content_overview' => false,
+        'show_combined_add_content' => false,
+        'content' => [],
+        'menu_items.expand' => [],
+        'menu_items.remove' => [],
+        'menu_items.unclickable' => [],
+    ];
+
+    foreach ($defaults as $key => $value) {
+        if ($config->get($key) === null) {
+            $config->set($key, $value);
+        }
+    }
+
+    $config->save();
+}
