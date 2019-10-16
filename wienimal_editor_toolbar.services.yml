@@ -18,7 +18,7 @@ services:
             - '@menu.active_trail'
             - '@language_manager'
             - '@string_translation'
-			- '@config.factory'
+            - '@config.factory'
         calls:
             - [setDefaultLanguageNegotiator, ['@?language_negotiator']]
             - [setCustomLanguageNegotiator, ['@?wienimal_editor_toolbar.language_negotiator']]
