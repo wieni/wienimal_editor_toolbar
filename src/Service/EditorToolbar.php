@@ -18,37 +18,16 @@ class EditorToolbar
     public function getLogo()
     {
 		$themeConfig = $this->configFactory->get('system.theme');
-		$adminTheme = drupal_get_path('theme', $themeConfig->get('admin'));
-		$activeTheme = drupal_get_path('theme', $themeConfig->get('default'));
-        $module = drupal_get_path('module', 'wienimal_editor_toolbar');
 
-        $possibilities = array_reduce(
-            [
-                "$activeTheme/logo-admin",
-                "$adminTheme/logo",
-                "$activeTheme/logo",
-                "$module/logo"
-            ],
-            function ($carry, $item) {
-                return array_merge(
-                    $carry,
-                    [
-                        "$item.svg",
-                        "$item.png",
-                        "$item.jpg",
-                    ]
-                );
-            },
-            []
-        );
-
-        foreach ($possibilities as $possibility) {
-            if (file_exists($possibility)) {
-                return '/' . $possibility;
-            }
+        if ($url = theme_get_setting('logo.url', $themeConfig->get('admin'))) {
+            return $url;
         }
 
-        return false;
+        if ($url = theme_get_setting('logo.url', $themeConfig->get('default'))) {
+            return $url;
+        }
+
+        return null;
     }
 
     public function getVersionInfo()
