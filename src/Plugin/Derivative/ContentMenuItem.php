@@ -7,6 +7,7 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\wienimal_editor_toolbar\TranslatableEntityLabelMarkup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -17,20 +18,25 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
     protected $configFactory;
     /** @var EntityTypeManagerInterface */
     protected $entityTypeManager;
+    /** @var ModuleHandlerInterface */
+    protected $moduleHandler;
 
     public function __construct(
         ConfigFactoryInterface $configFactory,
-        EntityTypeManagerInterface $entityTypeManager
+        EntityTypeManagerInterface $entityTypeManager,
+        ModuleHandlerInterface $moduleHandler
     ) {
         $this->configFactory = $configFactory;
         $this->entityTypeManager = $entityTypeManager;
+        $this->moduleHandler = $moduleHandler;
     }
 
     public static function create(ContainerInterface $container, $base_plugin_id)
     {
         return new static(
             $container->get('config.factory'),
-            $container->get('entity_type.manager')
+            $container->get('entity_type.manager'),
+            $container->get('module_handler'),
         );
     }
 
@@ -46,6 +52,7 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
                 continue;
             }
 
+            $bundleStorage = $this->entityTypeManager->getStorage($definition->getBundleEntityType());
             $bundles = $this->getBundleInfo($definition);
 
             if (is_array($bundleValues)) {
@@ -62,6 +69,14 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
             foreach ($bundles as $bundle => $info) {
                 $id = "{$entityTypeId}.{$bundle}";
                 $route = $info['route'] ?? $this->getRoute($definition, $bundle);
+                $bundleEntity = $bundleStorage->load($bundle);
+
+                if (
+                    $this->moduleHandler->moduleExists('wmsingles')
+                    && $bundleEntity->getThirdPartySetting('wmsingles', 'isSingle')
+                ) {
+                    continue;
+                }
 
                 $menu[$id] = [
                         'id' => $id,
