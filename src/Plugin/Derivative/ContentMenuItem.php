@@ -36,7 +36,7 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
         return new static(
             $container->get('config.factory'),
             $container->get('entity_type.manager'),
-            $container->get('module_handler'),
+            $container->get('module_handler')
         );
     }
 

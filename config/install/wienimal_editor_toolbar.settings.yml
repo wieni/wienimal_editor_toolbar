@@ -8,6 +8,6 @@ content:
   node: all
   taxonomy_term: all
 menu_items:
-  expand:
-  remove:
-  unclickable:
+  expand: {  }
+  remove: {  }
+  unclickable: {  }
