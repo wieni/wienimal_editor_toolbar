@@ -145,6 +145,7 @@ class EditorToolbarTreeManipulators
 
         if ($this->getShowContentAdd()) {
             $tree = $this->removeMenuItem($tree, 'admin_toolbar_tools.add_content');
+            $tree = $this->removeMenuItem($tree, 'admin_toolbar_tools.extra_links:node.add');
         } else {
             $tree = $this->removeMenuItem($tree, 'wienimal_editor_toolbar.content_add');
         }
