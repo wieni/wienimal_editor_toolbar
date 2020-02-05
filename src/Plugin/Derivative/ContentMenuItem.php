@@ -63,6 +63,10 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
                         // A custom menu item is provided
                         $bundles[$bundleName]['route'] = $bundleValue;
                     }
+
+                    if (!$bundleValue) {
+                        unset($bundles[$bundleName]);
+                    }
                 }
             }
 
