@@ -139,10 +139,12 @@ class EditorToolbarTreeManipulators
      */
     public function checkCustomMenuItemsAccess(array $tree): array
     {
-        if ($this->getShowContentOverview()) {
-            $tree = $this->removeMenuItem($tree, 'entity.taxonomy_vocabulary.collection');
-        } else {
+        if (!$this->getShowContentOverview()) {
             $tree = $this->removeMenuItem($tree, 'wienimal_editor_toolbar.content_overview');
+        }
+
+        if ($this->getShowContentOverview() && $this->getConfigValue('content.taxonomy_term') === 'all') {
+            $tree = $this->removeMenuItem($tree, 'entity.taxonomy_vocabulary.collection');
         }
 
         if ($this->getShowContentAdd()) {
