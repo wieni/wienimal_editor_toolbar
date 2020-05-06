@@ -99,7 +99,7 @@ class EditorToolbarMenuBuilder
             ->setRoot($rootMenuLink)
             ->setActiveTrail($activeTrail)
             ->excludeRoot()
-            ->setMaxDepth(4)
+            ->setMaxDepth(3)
             ->onlyEnabledLinks();
     }
 
