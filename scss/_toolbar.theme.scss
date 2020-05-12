@@ -4,13 +4,28 @@ $background-color: #212529;
     background-color: $background-color;
 
     .menu__item {
+        &--level-2 {
+            &:hover {
+                background-color: #f5f6fa;
+                box-shadow: inset -3px 0 0 0 #1caf5c;
+            }
+        }
+
+        &--level-3 {
+            &:hover {
+                background-color: #f5f6fa;
+            }
+        }
+    }
+
+    .menu__link {
         &--level-1 {
             color: #9fa6b6;
 
             &:focus,
             &:hover,
-            &.menu__item--active-trail {
-              color: #ffffff;
+            &.is-active {
+                color: #ffffff;
             }
         }
 
@@ -19,17 +34,11 @@ $background-color: #212529;
 
             &:hover {
                 color: #011627;
-                background-color: #f5f6fa;
-                box-shadow: inset -3px 0 0 0 #1caf5c;
             }
         }
 
         &--level-3 {
             color: #333333;
-
-            &:hover {
-                background-color: #f5f6fa;
-            }
         }
     }
 
