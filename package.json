@@ -4,30 +4,30 @@
   "description": "A toolbar built for editors, not developers.",
   "main": "",
   "scripts": {
-    "build-scss": "sass scss:css --style compressed",
+    "build-scss": "sass scss:css --style compressed --no-source-map",
     "build-postcss": "postcss -r css/*.css",
     "build": "yarn run build-scss && yarn run build-postcss"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cssnano": "^3.10.0",
-    "sass": "^1.22.12",
-    "postcss-cli": "^3.0.0",
-    "postcss-load-config": "^1.2.0"
+    "cssnano": "^4.1.10",
+    "postcss-cli": "^7.1.1",
+    "postcss-load-config": "^1.2.0",
+    "sass": "^1.22.12"
   },
   "postcss": {
     "plugins": {
-      "autoprefixer": {
-        "browsers": [
-          "last 2 versions",
-          "IE 10",
-          "IE 11",
-          "Firefox >= 20"
-        ],
-        "add": true
-      },
       "cssnano": {
+        "autoprefixer": {
+          "browsers": [
+            "last 2 versions",
+            "IE 10",
+            "IE 11",
+            "Firefox >= 20"
+          ],
+          "add": true
+        },
         "zindex": false,
         "reduceIdents": false
       }

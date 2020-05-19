@@ -1,2 +1,1 @@
 .editbar{background-color:#011627;color:#fff;position:fixed;top:0;left:0;width:300px;height:100%;z-index:10;transform:translateX(-300px)}.editbar.open{transform:translateX(0)}.editbar.has-transition{transition:transform .2s cubic-bezier(.86,0,.07,1)}.editbar__logo{display:block;margin-bottom:2rem}.editbar__container{padding:2rem}.editbar .menu{list-style:none;margin:0;padding:0}.editbar .menu--level-2{display:none}.editbar .menu__item{display:block}.editbar .menu__link{display:block;font-weight:500;padding:.5rem 1rem}
-/*# sourceMappingURL=toolbar.left.css.map */
