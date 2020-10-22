@@ -45,19 +45,6 @@ function wienimal_editor_toolbar_template_preprocess_default_variables_alter(&$v
     if ($config->get('show_logo') && $logo = $service->getLogo()) {
         $variables['logo'] = $logo;
     }
-
-    // Load version variables
-    if ($config->get('show_version_info') && $versionInfo = $service->getVersionInfo()) {
-        $variables['version'] = $versionInfo['version'];
-        $variables['versionDate'] = $versionInfo['date'];
-    }
-
-    // Load user variables
-    if ($variables['logged_in']) {
-        /** @var \Drupal\Core\Session\UserSession $user */
-        $user = $variables['user']->getAccount();
-        $variables['username'] = $user->getDisplayName();
-    }
 }
 
 function wienimal_editor_toolbar_locale_translation_projects_alter(&$projects)

@@ -29,15 +29,4 @@ class EditorToolbar
 
         return null;
     }
-
-    public function getVersionInfo()
-    {
-        $path = DRUPAL_ROOT . '/version.json';
-
-        if (file_exists($path)) {
-			return json_decode(file_get_contents($path), true);
-        }
-
-        return false;
-    }
 }
