@@ -4,6 +4,7 @@ namespace Drupal\wienimal_editor_toolbar;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceModifierInterface;
+use Drupal\wienimal_editor_toolbar\Menu\MenuLinkManager;
 use Drupal\wienimal_editor_toolbar\Service\EditorToolbarLanguageNegotiator;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
@@ -27,6 +28,11 @@ class WienimalEditorToolbarServiceProvider implements ServiceModifierInterface
                     new Reference('current_user'),
                 ])
             );
+        }
+
+        if ($container->hasDefinition('plugin.manager.menu.link')) {
+            $container->getDefinition('plugin.manager.menu.link')
+                ->setClass(MenuLinkManager::class);
         }
     }
 }
