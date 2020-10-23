@@ -1,8 +1,9 @@
-name: Wienimal Editor Toolbar
+name: Editor Toolbar
+description: A toolbar built for editors, not developers.
+package: Administration
+
 type: module
-description: "A toolbar built for editors, not developers."
 core: 8.x
-package: Wieni
 core_version_requirement: ^8 || ^9
 
 dependencies:
