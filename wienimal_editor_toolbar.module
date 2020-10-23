@@ -1,5 +1,36 @@
 <?php
 
+use Drupal\Core\Url;
+
+/**
+ * Implements @see hook_toolbar.
+ */
+function wienimal_editor_toolbar_toolbar(): array
+{
+    $items = [];
+
+    if ($info = \Drupal::service('wienimal_editor_toolbar.version_info')->get()) {
+        $items['build_info'] = [
+            '#type' => 'toolbar_item',
+            'tab' => [
+                '#type' => 'link',
+                '#title' => sprintf('%s (%s)', $info['version'], $info['date']->format('d/m/y - h:i')),
+                '#url' => Url::fromUserInput('/version.json'),
+                '#attributes' => [
+                    'title' => t('Version'),
+                    'class' => ['toolbar-icon', 'toolbar-icon-version', 'toolbar-item', 'toolbar-item--version'],
+                ],
+            ],
+            '#weight' => 1000,
+            '#wrapper_attributes' => [
+                'class' => ['toolbar-tab--version'],
+            ],
+        ];
+    }
+
+    return $items;
+}
+
 /**
  * Implements @see hook_toolbar_alter.
  */
