@@ -5,5 +5,8 @@ core: 8.x
 package: Wieni
 core_version_requirement: ^8 || ^9
 
+dependencies:
+    - drupal:language
+
 interface translation project: wienimal_editor_toolbar
 interface translation server pattern: # @see wienimal_editor_toolbar.module
