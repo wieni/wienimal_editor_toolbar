@@ -1,7 +1,6 @@
 parameters:
-    autoload_files:
+    bootstrapFiles:
         - vendor/drupal/core/includes/bootstrap.inc
-        - vendor/drupal/core/modules/system/system.module
     fileExtensions:
         - inc
         - install
