@@ -1,53 +1,25 @@
 <?php
 
-use Drupal\node\NodeTypeInterface;
-
 /**
- * Implements hook_theme().
+ * Implements @see hook_toolbar_alter.
  */
-function wienimal_editor_toolbar_theme($existing, $type, $theme, $path)
+function wienimal_editor_toolbar_toolbar_alter(array &$items): void
 {
-    return [
-        'wienimal_editor_toolbar' => [
-            'variables' => [
-                'attributes' => [],
-                'links' => [],
-            ],
-        ],
-        'wienimal_editor_toolbar_menu' => [
-            'variables' => [
-                'menu_name' => [],
-                'items' => [],
-            ],
-        ],
+    $builder = \Drupal::service('wienimal_editor_toolbar.menu_builder');
+
+    if (!$builder->showToolbar()) {
+        return;
+    }
+
+    $items['administration']['tray']['toolbar_administration']['#pre_render'] = [
+        [$builder, 'preRenderTray']
     ];
 }
 
 /**
- * Implements hook_page_top().
- * @param array $page_top
+ * Implements @see hook_locale_translation_projects_alter
  */
-function wienimal_editor_toolbar_page_top(array &$page_top)
-{
-    Drupal::service('wienimal_editor_toolbar.menu_builder')->buildPageTop($page_top);
-}
-
-/**
- * Implements hook_preprocess().
- */
-function wienimal_editor_toolbar_template_preprocess_default_variables_alter(&$variables)
-{
-    /** @var \Drupal\wienimal_editor_toolbar\Service\EditorToolbar $service */
-    $service = Drupal::service('wienimal_editor_toolbar');
-    $config = Drupal::config('wienimal_editor_toolbar.settings');
-
-    // Load logo
-    if ($config->get('show_logo') && $logo = $service->getLogo()) {
-        $variables['logo'] = $logo;
-    }
-}
-
-function wienimal_editor_toolbar_locale_translation_projects_alter(&$projects)
+function wienimal_editor_toolbar_locale_translation_projects_alter(array &$projects): void
 {
     $path = drupal_get_path('module', 'wienimal_editor_toolbar') . '/translations/%language.po';
     $projects['wienimal_editor_toolbar']['info']['interface translation server pattern'] = $path;

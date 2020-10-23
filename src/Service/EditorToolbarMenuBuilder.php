@@ -75,32 +75,48 @@ class EditorToolbarMenuBuilder
             '#theme' => 'wienimal_editor_toolbar',
             '#links' => $this->buildMenu(),
             '#access' => $this->showToolbar(),
-            '#attached' => [
-                'library' => [
-                    'wienimal_editor_toolbar/editbar-top',
-                ],
-            ],
         ];
 
         $this->restoreLanguage();
     }
 
-    protected function getMenuName(): string
+    protected function getMenuName(): ?string
     {
-		return $this->configFactory->get('wienimal_editor_toolbar.settings')->get('menu');
+        if (!$this->showToolbar()) {
+            return null;
+        }
+
+		return $this->configFactory
+            ->get('wienimal_editor_toolbar.settings')
+            ->get('menu');
+    }
+
+    protected function getRootMenuLink(): ?string
+    {
+        if (!$this->showToolbar()) {
+            return 'system.admin';
+        }
+
+		return $this->configFactory
+            ->get('wienimal_editor_toolbar.settings')
+            ->get('root_menu_link');
     }
 
     protected function getMenuTreeParameters(): MenuTreeParameters
     {
-		$rootMenuLink = $this->configFactory->get('wienimal_editor_toolbar.settings')->get('root_menu_link');
-		$activeTrail = $this->menuActiveTrail->getActiveTrailIds('admin');
+		$activeTrail = $this->menuActiveTrail->getActiveTrailIds($this->getMenuName());
 
-        return (new MenuTreeParameters)
-            ->setRoot($rootMenuLink)
+        $parameters = (new MenuTreeParameters)
             ->setActiveTrail($activeTrail)
             ->excludeRoot()
             ->setMaxDepth(3)
             ->onlyEnabledLinks();
+
+        if ($rootMenuLink = $this->getRootMenuLink()) {
+            $parameters->setRoot($rootMenuLink);
+        }
+
+        return $parameters;
     }
 
     /**
@@ -135,10 +151,17 @@ class EditorToolbarMenuBuilder
         return $menu;
     }
 
+    public function preRenderTray(array $build)
+    {
+        $build['administration_menu'] = $this->buildMenu();
+
+        return $build;
+    }
+
     /**
      * Check if the current user has permission to see the toolbar
      */
-    private function showToolbar(): bool
+    public function showToolbar(): bool
     {
         return $this->currentUser->hasPermission('access editor toolbar')
             && !$this->currentUser->hasPermission('access administration menu');

@@ -1,8 +1,6 @@
 services:
-    wienimal_editor_toolbar:
-        class: Drupal\wienimal_editor_toolbar\Service\EditorToolbar
-        arguments:
-            - '@config.factory'
+    wienimal_editor_toolbar.version_info:
+        class: Drupal\wienimal_editor_toolbar\Service\VersionInfo
 
     wienimal_editor_toolbar.tree_manipulators:
         class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarTreeManipulators
