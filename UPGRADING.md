@@ -16,3 +16,6 @@ The `wienimal_editor_toolbar.menu.link_tree` service is removed without replacem
 
 The `version`, `versionDate` & `username` default variables are removed. Make sure no other code (eg. wienimal) is 
  using these variables.
+
+If the `plugin.manager.menu.link` service is already overrided in custom code, make sure to remove the custom code or 
+ to combine both.
