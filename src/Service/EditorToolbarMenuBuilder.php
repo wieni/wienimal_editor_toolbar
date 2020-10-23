@@ -3,7 +3,7 @@
 namespace Drupal\wienimal_editor_toolbar\Service;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Extension\ThemeHandlerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Menu\MenuActiveTrailInterface;
@@ -21,8 +21,8 @@ class EditorToolbarMenuBuilder
     protected $menuTree;
     /** @var AccountProxyInterface */
     protected $currentUser;
-    /** @var ThemeHandlerInterface */
-    protected $themeHandler;
+    /** @var ModuleHandlerInterface **/
+    protected $moduleHandler;
     /** @var MenuActiveTrailInterface */
     protected $menuActiveTrail;
     /** @var LanguageManagerInterface */
@@ -42,7 +42,7 @@ class EditorToolbarMenuBuilder
     public function __construct(
         MenuLinkTreeInterface $menuTree,
         AccountProxyInterface $currentUser,
-        ThemeHandlerInterface $themeHandler,
+        ModuleHandlerInterface $moduleHandler,
         MenuActiveTrailInterface $menuActiveTrail,
         LanguageManagerInterface $languageManager,
         TranslationManager $translationManager,
@@ -50,34 +50,21 @@ class EditorToolbarMenuBuilder
     ) {
         $this->menuTree = $menuTree;
         $this->currentUser = $currentUser;
-        $this->themeHandler = $themeHandler;
+        $this->moduleHandler = $moduleHandler;
         $this->menuActiveTrail = $menuActiveTrail;
         $this->languageManager = $languageManager;
         $this->translationManager = $translationManager;
         $this->configFactory = $configFactory;
     }
 
-    public function setDefaultLanguageNegotiator(LanguageNegotiator $languageNegotiator)
+    public function setDefaultLanguageNegotiator(LanguageNegotiator $languageNegotiator): void
     {
         $this->defaultNegotiator = $languageNegotiator;
     }
 
-    public function setCustomLanguageNegotiator(EditorToolbarLanguageNegotiator $languageNegotiator)
+    public function setCustomLanguageNegotiator(EditorToolbarLanguageNegotiator $languageNegotiator): void
     {
         $this->customNegotiator = $languageNegotiator;
-    }
-
-    public function buildPageTop(array &$page_top)
-    {
-        $this->switchToUserAdminLanguage();
-
-        $page_top['wienimal_editor_toolbar'] = [
-            '#theme' => 'wienimal_editor_toolbar',
-            '#links' => $this->buildMenu(),
-            '#access' => $this->showToolbar(),
-        ];
-
-        $this->restoreLanguage();
     }
 
     /** Load, transform and return the menu */
@@ -102,6 +89,11 @@ class EditorToolbarMenuBuilder
             // Use the default sorting of menu links.
             ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
         ];
+
+        if ($this->moduleHandler->moduleExists('admin_toolbar')) {
+            $manipulators[] = ['callable' => 'toolbar_tools_menu_navigation_links'];
+        }
+
         $tree = $this->menuTree->transform($tree, $manipulators);
 
         // Finally, build a renderable array from the transformed tree.
@@ -110,9 +102,11 @@ class EditorToolbarMenuBuilder
         return $menu;
     }
 
-    public function preRenderTray(array $build)
+    public function preRenderTray(array $build): array
     {
+        $this->switchToUserAdminLanguage();
         $build['administration_menu'] = $this->buildMenu();
+        $this->restoreLanguage();
 
         return $build;
     }
@@ -135,17 +129,6 @@ class EditorToolbarMenuBuilder
             ->get('menu');
     }
 
-    protected function getRootMenuLink(): ?string
-    {
-        if (!$this->showToolbar()) {
-            return 'system.admin';
-        }
-
-        return $this->configFactory
-            ->get('wienimal_editor_toolbar.settings')
-            ->get('root_menu_link');
-    }
-
     protected function getMenuTreeParameters(): MenuTreeParameters
     {
         $activeTrail = $this->menuActiveTrail->getActiveTrailIds($this->getMenuName());
@@ -163,7 +146,18 @@ class EditorToolbarMenuBuilder
         return $parameters;
     }
 
-    protected function switchToUserAdminLanguage()
+    protected function getRootMenuLink(): ?string
+    {
+        if (!$this->showToolbar()) {
+            return 'system.admin';
+        }
+
+        return $this->configFactory
+            ->get('wienimal_editor_toolbar.settings')
+            ->get('root_menu_link');
+    }
+
+    protected function switchToUserAdminLanguage(): void
     {
         if (
             !isset($this->customNegotiator)
@@ -181,7 +175,7 @@ class EditorToolbarMenuBuilder
         $this->translationManager->setDefaultLangcode($adminLangcode);
     }
 
-    protected function restoreLanguage()
+    protected function restoreLanguage(): void
     {
         if (
             !isset($this->customNegotiator)
