@@ -23,8 +23,8 @@ installed using Composer:
 ```
 
 ## How does it work?
-Only users with the `access administration menu` and `access editor toolbar` permissions will be able to view the 
- editor toolbar.
+Only users with the `access toolbar` and `access editor toolbar` permissions will be able to view the 
+ editor toolbar. The editor toolbar is disabled by default for user 1.
 
 ### Customizing the default administration menu
 TODO

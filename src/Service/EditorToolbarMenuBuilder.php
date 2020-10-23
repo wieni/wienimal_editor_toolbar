@@ -114,16 +114,13 @@ class EditorToolbarMenuBuilder
     /** Check if the current user has permission to see the toolbar */
     public function showToolbar(): bool
     {
-        return $this->currentUser->hasPermission('access editor toolbar')
-            && !$this->currentUser->hasPermission('access administration menu');
+        return $this->currentUser->hasPermission('access toolbar')
+            && $this->currentUser->hasPermission('access editor toolbar')
+            && $this->currentUser->id() !== '1';
     }
 
     protected function getMenuName(): ?string
     {
-        if (!$this->showToolbar()) {
-            return null;
-        }
-
         return $this->configFactory
             ->get('wienimal_editor_toolbar.settings')
             ->get('menu');
@@ -148,10 +145,6 @@ class EditorToolbarMenuBuilder
 
     protected function getRootMenuLink(): ?string
     {
-        if (!$this->showToolbar()) {
-            return 'system.admin';
-        }
-
         return $this->configFactory
             ->get('wienimal_editor_toolbar.settings')
             ->get('root_menu_link');
