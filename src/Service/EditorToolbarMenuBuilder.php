@@ -29,8 +29,8 @@ class EditorToolbarMenuBuilder
     protected $languageManager;
     /** @var TranslationManager */
     protected $translationManager;
-	/** @var ConfigFactoryInterface */
-	protected $configFactory;
+    /** @var ConfigFactoryInterface */
+    protected $configFactory;
 
     /** @var LanguageNegotiatorInterface **/
     protected $originalNegotiator;
@@ -46,7 +46,7 @@ class EditorToolbarMenuBuilder
         MenuActiveTrailInterface $menuActiveTrail,
         LanguageManagerInterface $languageManager,
         TranslationManager $translationManager,
-		ConfigFactoryInterface $configFactory
+        ConfigFactoryInterface $configFactory
     ) {
         $this->menuTree = $menuTree;
         $this->currentUser = $currentUser;
@@ -54,7 +54,7 @@ class EditorToolbarMenuBuilder
         $this->menuActiveTrail = $menuActiveTrail;
         $this->languageManager = $languageManager;
         $this->translationManager = $translationManager;
-		$this->configFactory = $configFactory;
+        $this->configFactory = $configFactory;
     }
 
     public function setDefaultLanguageNegotiator(LanguageNegotiator $languageNegotiator)
@@ -80,48 +80,7 @@ class EditorToolbarMenuBuilder
         $this->restoreLanguage();
     }
 
-    protected function getMenuName(): ?string
-    {
-        if (!$this->showToolbar()) {
-            return null;
-        }
-
-		return $this->configFactory
-            ->get('wienimal_editor_toolbar.settings')
-            ->get('menu');
-    }
-
-    protected function getRootMenuLink(): ?string
-    {
-        if (!$this->showToolbar()) {
-            return 'system.admin';
-        }
-
-		return $this->configFactory
-            ->get('wienimal_editor_toolbar.settings')
-            ->get('root_menu_link');
-    }
-
-    protected function getMenuTreeParameters(): MenuTreeParameters
-    {
-		$activeTrail = $this->menuActiveTrail->getActiveTrailIds($this->getMenuName());
-
-        $parameters = (new MenuTreeParameters)
-            ->setActiveTrail($activeTrail)
-            ->excludeRoot()
-            ->setMaxDepth(3)
-            ->onlyEnabledLinks();
-
-        if ($rootMenuLink = $this->getRootMenuLink()) {
-            $parameters->setRoot($rootMenuLink);
-        }
-
-        return $parameters;
-    }
-
-    /**
-     * Load, transform and return the menu
-     */
+    /** Load, transform and return the menu */
     public function buildMenu(): array
     {
         $tree = $this->menuTree->load($this->getMenuName(), $this->getMenuTreeParameters());
@@ -158,13 +117,50 @@ class EditorToolbarMenuBuilder
         return $build;
     }
 
-    /**
-     * Check if the current user has permission to see the toolbar
-     */
+    /** Check if the current user has permission to see the toolbar */
     public function showToolbar(): bool
     {
         return $this->currentUser->hasPermission('access editor toolbar')
             && !$this->currentUser->hasPermission('access administration menu');
+    }
+
+    protected function getMenuName(): ?string
+    {
+        if (!$this->showToolbar()) {
+            return null;
+        }
+
+        return $this->configFactory
+            ->get('wienimal_editor_toolbar.settings')
+            ->get('menu');
+    }
+
+    protected function getRootMenuLink(): ?string
+    {
+        if (!$this->showToolbar()) {
+            return 'system.admin';
+        }
+
+        return $this->configFactory
+            ->get('wienimal_editor_toolbar.settings')
+            ->get('root_menu_link');
+    }
+
+    protected function getMenuTreeParameters(): MenuTreeParameters
+    {
+        $activeTrail = $this->menuActiveTrail->getActiveTrailIds($this->getMenuName());
+
+        $parameters = (new MenuTreeParameters)
+            ->setActiveTrail($activeTrail)
+            ->excludeRoot()
+            ->setMaxDepth(3)
+            ->onlyEnabledLinks();
+
+        if ($rootMenuLink = $this->getRootMenuLink()) {
+            $parameters->setRoot($rootMenuLink);
+        }
+
+        return $parameters;
     }
 
     protected function switchToUserAdminLanguage()

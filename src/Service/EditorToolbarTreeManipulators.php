@@ -17,14 +17,12 @@ class EditorToolbarTreeManipulators
     protected $configFactory;
 
     public function __construct(
-		ConfigFactoryInterface $configFactory
+        ConfigFactoryInterface $configFactory
     ) {
         $this->configFactory = $configFactory;
     }
 
-    /**
-     * Remove certain unneeded menu items for editors
-     */
+    /** Remove certain unneeded menu items for editors */
     public function removeMenuItems(array $tree): array
     {
         foreach ($this->getMenuItemsToRemove() as $item) {
@@ -34,14 +32,12 @@ class EditorToolbarTreeManipulators
         return $tree;
     }
 
-    /**
-     * Remove a menu item from a menu tree
-     */
+    /** Remove a menu item from a menu tree */
     public function removeMenuItem(array $tree, string $item): array
     {
         self::walkTreeRecursive(
             $tree,
-            function (&$value) use ($item) {
+            function (&$value) use ($item): void {
                 /** @var MenuLinkTreeElement $value */
                 if ($value->link->getPluginId() === $item) {
                     $value->access = AccessResult::forbidden();
@@ -52,9 +48,7 @@ class EditorToolbarTreeManipulators
         return $tree;
     }
 
-    /**
-     * Remove menu item and move subtree items to root
-     */
+    /** Remove menu item and move subtree items to root */
     public function expandMenuItem(array $tree): array
     {
         $items = $this->getMenuItemsToExpand();
@@ -80,19 +74,17 @@ class EditorToolbarTreeManipulators
         return $tree;
     }
 
-    /**
-     * Make the 'Add content' menu item not clickable
-     */
+    /** Make the 'Add content' menu item not clickable */
     public function makeMenuItemsNotClickable(array $tree): array
     {
         $items = $this->getMenuItemsToMakeUnClickable();
 
         self::walkTreeRecursive(
             $tree,
-            function (&$value) use ($items) {
+            function (&$value) use ($items): void {
                 if (
                     !$value->link instanceof MenuLinkDefault
-                    || !in_array($value->link->getPluginId(), $items)
+                    || !in_array($value->link->getPluginId(), $items, true)
                 ) {
                     return;
                 }
@@ -107,9 +99,7 @@ class EditorToolbarTreeManipulators
         return $tree;
     }
 
-    /**
-     * Remove menu links without link and without children
-     */
+    /** Remove menu links without link and without children */
     public function removeEmptyMenuItems(array $tree): array
     {
         self::walkTreeRecursive(
@@ -117,13 +107,13 @@ class EditorToolbarTreeManipulators
             function (MenuLinkTreeElement $value, string $key) use ($tree) {
                 $children = array_filter(
                     $value->subtree,
-                    function (MenuLinkTreeElement $treeElement) {
+                    function (MenuLinkTreeElement $treeElement): bool {
                         return $treeElement->access->isAllowed();
                     }
                 );
 
                 if (
-                    in_array($value->link->getRouteName(), ['<nolink>', '<none>'])
+                    in_array($value->link->getRouteName(), ['<nolink>', '<none>'], true)
                     && empty($children)
                 ) {
                     $this->removeMenuItem($tree, $key);
@@ -134,9 +124,7 @@ class EditorToolbarTreeManipulators
         return $tree;
     }
 
-    /**
-     * Check if 'Content overview' and 'Add content' menu items have to be shown
-     */
+    /** Check if 'Content overview' and 'Add content' menu items have to be shown */
     public function checkCustomMenuItemsAccess(array $tree): array
     {
         if (!$this->getShowContentOverview()) {
@@ -161,7 +149,6 @@ class EditorToolbarTreeManipulators
      * Apply a user function to every item of a menu tree
      *
      * @param MenuLinkTreeElement|MenuLinkTreeElement[] $tree
-     * @param callable $callback
      * @return void
      */
     protected static function walkTreeRecursive(array $tree, callable $callback)
@@ -171,8 +158,6 @@ class EditorToolbarTreeManipulators
 
     /**
      * @param MenuLinkTreeElement|MenuLinkTreeElement[] $value
-     * @param string $key
-     * @param callable $callback
      * @return void
      */
     protected static function walkTreeRecursiveHandler($value, string $key, callable $callback)
@@ -191,7 +176,6 @@ class EditorToolbarTreeManipulators
     /**
      * Make changes to the plugin definition of a menu link
      * @param MenuLinkDefault|ViewsMenuLink $link
-     * @param array $newDefinition
      * @return MenuLinkDefault|ViewsMenuLink|false
      */
     protected function updateMenuLinkPluginDefinition($link, array $newDefinition)
@@ -199,7 +183,6 @@ class EditorToolbarTreeManipulators
         if ($link instanceof ViewsMenuLink) {
             $link->updateLink($newDefinition, false);
             return $link;
-
         }
 
         if ($link instanceof MenuLinkInterface) {

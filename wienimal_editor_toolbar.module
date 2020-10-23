@@ -43,7 +43,7 @@ function wienimal_editor_toolbar_toolbar_alter(array &$items): void
     }
 
     $items['administration']['tray']['toolbar_administration']['#pre_render'] = [
-        [$builder, 'preRenderTray']
+        [$builder, 'preRenderTray'],
     ];
 }
 

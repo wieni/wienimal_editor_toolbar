@@ -45,7 +45,8 @@ class EditorToolbarLanguageNegotiator extends LanguageNegotiator
         return [static::METHOD_ID => $language];
     }
 
-    public function initLanguageManager() {
+    public function initLanguageManager()
+    {
         parent::initLanguageManager();
     }
 }

@@ -18,7 +18,7 @@ class MenuYamlDiscovery extends YamlDiscovery
     public function getDefinitions()
     {
         return array_map(
-            function (array $definition) {
+            function (array $definition): array {
                 $definition['menu_name'] = $this->menuName;
                 return $definition;
             },

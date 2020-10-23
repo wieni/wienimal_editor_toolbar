@@ -87,7 +87,7 @@ class TranslatableEntityLabelMarkup implements MarkupInterface
      * @param LanguageManagerInterface $language_manager
      *   The language manager.
      */
-    public function __construct($entity_type_id, $entity_id, $langcode = NULL, EntityTypeManagerInterface $entity_type_manager = NULL, EntityRepositoryInterface $entity_repository = NULL, LanguageManagerInterface $language_manager = NULL)
+    public function __construct($entity_type_id, $entity_id, $langcode = null, ?EntityTypeManagerInterface $entity_type_manager = null, ?EntityRepositoryInterface $entity_repository = null, ?LanguageManagerInterface $language_manager = null)
     {
         $this->entityTypeId = $entity_type_id;
         $this->entityId = $entity_id;
@@ -97,17 +97,17 @@ class TranslatableEntityLabelMarkup implements MarkupInterface
         $this->langcode = $langcode ?: $this->getLanguageManager()->getCurrentLanguage()->getId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** Magic __sleep() method to avoid serializing services. */
+    public function __sleep()
+    {
+        return ['entityTypeId', 'entityId'];
+    }
+
     public function jsonSerialize()
     {
         $this->__toString();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function render()
     {
         try {
@@ -124,7 +124,6 @@ class TranslatableEntityLabelMarkup implements MarkupInterface
                 ($original_config_language = $language_manager->getConfigOverrideLanguage()) &&
                 ($this->langcode !== $original_config_language->getId()) &&
                 ($override_language = $language_manager->getLanguage($this->langcode))) {
-
                 $language_manager->setConfigOverrideLanguage($override_language);
             }
 
@@ -163,22 +162,11 @@ class TranslatableEntityLabelMarkup implements MarkupInterface
         }
 
         if ($string instanceof TranslatableMarkup) {
-            $string = (string)$string;
+            $string = (string) $string;
         }
         return $string;
     }
 
-    /**
-     * Magic __sleep() method to avoid serializing services.
-     */
-    public function __sleep()
-    {
-        return ['entityTypeId', 'entityId'];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function count()
     {
         return mb_strlen($this->render());
@@ -242,5 +230,4 @@ class TranslatableEntityLabelMarkup implements MarkupInterface
     {
         return Html::escape($this->getEntityRepository()->getTranslationFromContext($entity, $this->langcode)->label());
     }
-
 }

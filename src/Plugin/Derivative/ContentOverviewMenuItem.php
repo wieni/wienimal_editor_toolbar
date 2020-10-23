@@ -15,8 +15,8 @@ class ContentOverviewMenuItem extends ContentMenuItem
                 'options' => [
                     'query' => [
                         'type' => $bundle,
-                    ]
-                ]
+                    ],
+                ],
             ];
         }
 

@@ -2,8 +2,6 @@
 
 namespace Drupal\wienimal_editor_toolbar\Service;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
-
 class VersionInfo
 {
     public function get(): ?array
@@ -23,7 +21,7 @@ class VersionInfo
         return [
             'version' => $data['version'],
             'date' => \DateTime::createFromFormat(\DateTime::ISO8601, $data['date'])
-                ->setTimezone(new \DateTimeZone('Europe/Brussels'))
+                ->setTimezone(new \DateTimeZone('Europe/Brussels')),
         ];
     }
 }
