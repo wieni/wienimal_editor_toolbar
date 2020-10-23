@@ -12,7 +12,7 @@ services:
     wienimal_editor_toolbar.menu_builder:
         class: Drupal\wienimal_editor_toolbar\Service\EditorToolbarMenuBuilder
         arguments:
-            - '@wienimal_editor_toolbar.menu.link_tree'
+            - '@toolbar.menu_tree'
             - '@current_user'
             - '@theme_handler'
             - '@menu.active_trail'
@@ -23,6 +23,6 @@ services:
             - [setDefaultLanguageNegotiator, ['@?language_negotiator']]
             - [setCustomLanguageNegotiator, ['@?wienimal_editor_toolbar.language_negotiator']]
 
-    wienimal_editor_toolbar.menu.link_tree:
-        class: Drupal\wienimal_editor_toolbar\Menu\EditorToolbarMenuLinkTree
-        parent: menu.link_tree
+    wienimal_editor_toolbar.admin_content_route.subscriber:
+        class: Drupal\wienimal_editor_toolbar\EventSubscriber\Routing\AdminContentRouteSubscriber
+        tags: [ { name: event_subscriber } ]
