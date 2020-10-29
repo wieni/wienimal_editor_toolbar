@@ -8,25 +8,33 @@ use Drupal\Core\Url;
 function wienimal_editor_toolbar_toolbar(): array
 {
     $items = [];
+    $config = \Drupal::config('wienimal_editor_toolbar.settings');
+    $versionInfo = \Drupal::service('wienimal_editor_toolbar.version_info');
 
-    if ($info = \Drupal::service('wienimal_editor_toolbar.version_info')->get()) {
-        $items['build_info'] = [
-            '#type' => 'toolbar_item',
-            'tab' => [
-                '#type' => 'link',
-                '#title' => sprintf('%s (%s)', $info['version'], $info['date']->format('d/m/y - h:i')),
-                '#url' => Url::fromUserInput('/version.json'),
-                '#attributes' => [
-                    'title' => t('Version'),
-                    'class' => ['toolbar-icon', 'toolbar-icon-version', 'toolbar-item', 'toolbar-item--version'],
-                ],
-            ],
-            '#weight' => 1000,
-            '#wrapper_attributes' => [
-                'class' => ['toolbar-tab--version'],
-            ],
-        ];
+    if (!$config->get('show_version_info')) {
+        return $items;
     }
+
+    if (!$info = $versionInfo->get()) {
+        return $items;
+    }
+
+    $items['build_info'] = [
+        '#type' => 'toolbar_item',
+        'tab' => [
+            '#type' => 'link',
+            '#title' => sprintf('%s (%s)', $info['version'], $info['date']->format('d/m/y - h:i')),
+            '#url' => Url::fromUserInput('/version.json'),
+            '#attributes' => [
+                'title' => t('Version'),
+                'class' => ['toolbar-icon', 'toolbar-icon-version', 'toolbar-item', 'toolbar-item--version'],
+            ],
+        ],
+        '#weight' => 1000,
+        '#wrapper_attributes' => [
+            'class' => ['toolbar-tab--version'],
+        ],
+    ];
 
     return $items;
 }
