@@ -27,3 +27,15 @@ function wienimal_editor_toolbar_update_8002()
 
     $config->save();
 }
+
+/**
+ * Remove show_logo setting
+ */
+function wienimal_editor_toolbar_update_8003()
+{
+    $config = \Drupal::configFactory()
+        ->getEditable('wienimal_editor_toolbar.settings');
+
+    $config->clear('show_logo');
+    $config->save();
+}

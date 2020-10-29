@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix double content add/overview for non-editors
 
+### Removed
+- Remove show_logo setting
+
 ## [4.0.0] - 2020-10-23
 ### Added
 - Add toolbar item with version info
