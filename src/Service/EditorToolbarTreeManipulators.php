@@ -124,27 +124,6 @@ class EditorToolbarTreeManipulators
         return $tree;
     }
 
-    /** Check if 'Content overview' and 'Add content' menu items have to be shown */
-    public function checkCustomMenuItemsAccess(array $tree): array
-    {
-        if (!$this->getShowContentOverview()) {
-            $tree = $this->removeMenuItem($tree, 'wienimal_editor_toolbar.content_overview');
-        }
-
-        if ($this->getShowContentOverview() && $this->getConfigValue('content.taxonomy_term') === 'all') {
-            $tree = $this->removeMenuItem($tree, 'entity.taxonomy_vocabulary.collection');
-        }
-
-        if ($this->getShowContentAdd()) {
-            $tree = $this->removeMenuItem($tree, 'admin_toolbar_tools.add_content');
-            $tree = $this->removeMenuItem($tree, 'admin_toolbar_tools.extra_links:node.add');
-        } else {
-            $tree = $this->removeMenuItem($tree, 'wienimal_editor_toolbar.content_add');
-        }
-
-        return $tree;
-    }
-
     /**
      * Apply a user function to every item of a menu tree
      *

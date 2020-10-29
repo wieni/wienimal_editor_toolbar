@@ -76,8 +76,6 @@ class EditorToolbarMenuBuilder
         $manipulators = [
             // Only show links that are accessible for the current user.
             ['callable' => 'menu.default_tree_manipulators:checkAccess'],
-            // Check if 'Content overview' and 'Add content' menu items have to be shown
-            ['callable' => 'wienimal_editor_toolbar.tree_manipulators:checkCustomMenuItemsAccess'],
             // Move certain menu items to the root of the toolbar
             ['callable' => 'wienimal_editor_toolbar.tree_manipulators:expandMenuItem'],
             // Remove certain unneeded menu items for editors

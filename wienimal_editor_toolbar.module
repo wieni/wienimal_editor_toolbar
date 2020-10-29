@@ -55,3 +55,41 @@ function wienimal_editor_toolbar_locale_translation_projects_alter(array &$proje
     $path = drupal_get_path('module', 'wienimal_editor_toolbar') . '/translations/%language.po';
     $projects['wienimal_editor_toolbar']['info']['interface translation server pattern'] = $path;
 }
+
+/**
+ * Implements @see hook_menu_links_discovered_alter
+ */
+function wienimal_editor_toolbar_menu_links_discovered_alter(array &$links): void
+{
+    $config = \Drupal::config('wienimal_editor_toolbar.settings');
+
+    if (!$config->get('show_combined_content_overview')) {
+        unset($links['wienimal_editor_toolbar.content_overview']);
+    }
+
+    if (!$config->get('show_combined_add_content')) {
+        unset($links['wienimal_editor_toolbar.content_add']);
+    }
+
+    if (
+        isset($links['entity.taxonomy_vocabulary.collection'])
+        && $config->get('show_combined_content_overview')
+        && $config->get('content.taxonomy_term') === 'all'
+    ) {
+        unset($links['entity.taxonomy_vocabulary.collection']);
+    }
+
+    if ($config->get('show_combined_add_content')) {
+        if (isset($links['admin_toolbar_tools.extra_links:node.add'])) {
+            unset($links['admin_toolbar_tools.extra_links:node.add']);
+            $links = array_filter($links, static function (array $link) {
+                return !isset($link['parent'])
+                    || $link['parent'] !== 'admin_toolbar_tools.extra_links:node.add';
+            });
+        }
+
+        if (isset($links['admin_toolbar_tools.add_content'])) {
+            unset($links['admin_toolbar_tools.add_content']);
+        }
+    }
+}
