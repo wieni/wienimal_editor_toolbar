@@ -9,13 +9,14 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Menu\MenuActiveTrailInterface;
 use Drupal\Core\Menu\MenuLinkTreeInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\language\LanguageNegotiator;
 use Drupal\language\LanguageNegotiatorInterface;
 
-class EditorToolbarMenuBuilder
+class EditorToolbarMenuBuilder implements TrustedCallbackInterface
 {
     /** @var MenuLinkTreeInterface */
     protected $menuTree;
@@ -181,5 +182,10 @@ class EditorToolbarMenuBuilder
             ->getCurrentLanguage(LanguageInterface::TYPE_INTERFACE)
             ->getId();
         $this->translationManager->setDefaultLangcode($adminLangcode);
+    }
+
+    public static function trustedCallbacks(): array
+    {
+        return ['preRenderTray'];
     }
 }
