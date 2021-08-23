@@ -72,7 +72,8 @@ class EditorToolbarMenuBuilder implements TrustedCallbackInterface
     /** Load, transform and return the menu */
     public function buildMenu(): array
     {
-        $tree = $this->menuTree->load($this->getMenuName(), $this->getMenuTreeParameters());
+        $menuName = $this->getMenuName();
+        $tree = $this->menuTree->load($menuName, $this->getMenuTreeParameters());
 
         // Transform the tree using the manipulators you want.
         $manipulators = [
