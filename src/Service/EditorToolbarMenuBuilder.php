@@ -2,6 +2,7 @@
 
 namespace Drupal\wienimal_editor_toolbar\Service;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageInterface;
@@ -97,6 +98,20 @@ class EditorToolbarMenuBuilder implements TrustedCallbackInterface
 
         // Finally, build a renderable array from the transformed tree.
         $menu = $this->menuTree->build($tree);
+
+        // Add cache metadata
+        $cacheMetadata = CacheableMetadata::createFromRenderArray($menu);
+
+        $cacheMetadata->addCacheContexts([
+            'route.menu_active_trails:' . $menuName,
+            'user.is_super_user',
+            'user.permissions',
+        ]);
+        $cacheMetadata->addCacheTags([
+            'config:wienimal_editor_toolbar.settings',
+        ]);
+
+        $cacheMetadata->applyTo($menu);
 
         return $menu;
     }

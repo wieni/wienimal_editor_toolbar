@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Make language module dependency optional
 
+### Fixed
+- Add cache metadata to rendered toolbar
+
 ## [4.0.2] - 2020-11-03
 ### Changed
 - Increase minimum core version to 8.8
