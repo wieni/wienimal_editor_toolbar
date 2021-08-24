@@ -178,12 +178,12 @@ class EditorToolbarTreeManipulators
 
     protected function getShowContentAdd(): bool
     {
-        return $this->getConfigValue('show_combined_add_content');
+        return $this->getConfigValue('menu_items.content_add.enable');
     }
 
     protected function getShowContentOverview(): bool
     {
-        return $this->getConfigValue('show_combined_content_overview');
+        return $this->getConfigValue('menu_items.content_overview.enable');
     }
 
     protected function getMenuItemsToExpand(): array

@@ -6,6 +6,11 @@ use Drupal\Core\Entity\EntityTypeInterface;
 
 class ContentOverviewMenuItem extends ContentMenuItem
 {
+    protected function getMenuItemName(): string
+    {
+        return 'content_overview';
+    }
+
     protected function getRoute(EntityTypeInterface $entityType, string $bundle): array
     {
         if ($entityType->getProvider() === 'eck') {
@@ -33,7 +38,7 @@ class ContentOverviewMenuItem extends ContentMenuItem
             return [
                 'route_name' => 'system.admin_content',
                 'route_parameters' => [
-                    $entityType->getKey('bundle') => $bundle,
+                    $bundleKey => $bundle,
                 ],
             ];
         }

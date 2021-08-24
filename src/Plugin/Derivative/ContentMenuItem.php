@@ -3,7 +3,6 @@
 namespace Drupal\wienimal_editor_toolbar\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -21,58 +20,44 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
     /** @var ModuleHandlerInterface */
     protected $moduleHandler;
 
-    public function __construct(
-        ConfigFactoryInterface $configFactory,
-        EntityTypeManagerInterface $entityTypeManager,
-        ModuleHandlerInterface $moduleHandler
-    ) {
-        $this->configFactory = $configFactory;
-        $this->entityTypeManager = $entityTypeManager;
-        $this->moduleHandler = $moduleHandler;
-    }
-
     public static function create(ContainerInterface $container, $base_plugin_id)
     {
-        return new static(
-            $container->get('config.factory'),
-            $container->get('entity_type.manager'),
-            $container->get('module_handler')
-        );
+        $instance = new static();
+        $instance->configFactory = $container->get('config.factory');
+        $instance->entityTypeManager = $container->get('entity_type.manager');
+        $instance->moduleHandler = $container->get('module_handler');
+
+        return $instance;
     }
 
     public function getDerivativeDefinitions($basePluginDefinition)
     {
+        $menuItemName = $this->getMenuItemName();
         $config = $this->configFactory->get('wienimal_editor_toolbar.settings');
+        $entityTypes = $config->get(sprintf('menu_items.%s.entity_types', $menuItemName));
+        $overrides = $config->get(sprintf('menu_items.%s.overrides', $menuItemName));
         $menu = [];
 
-        foreach ($config->get('content') as $entityTypeId => $bundleValues) {
-            try {
-                $definition = $this->entityTypeManager->getDefinition($entityTypeId);
-            } catch (PluginNotFoundException $e) {
+        foreach ($entityTypes as $entityTypeId => $bundles) {
+            $definition = $this->entityTypeManager->getDefinition($entityTypeId, false);
+
+            if (!$definition) {
                 continue;
             }
 
             $bundleStorage = $this->entityTypeManager->getStorage($definition->getBundleEntityType());
-            $bundles = $this->getBundleInfo($definition);
+            $allBundles = $this->getBundleInfo($definition);
 
-            if (is_array($bundleValues)) {
-                $bundles = array_intersect_key($bundles, $bundleValues);
-
-                foreach ($bundleValues as $bundleName => $bundleValue) {
-                    if (is_array($bundleValue)) {
-                        // A custom menu item is provided
-                        $bundles[$bundleName]['route'] = $bundleValue;
-                    }
-
-                    if (!$bundleValue) {
-                        unset($bundles[$bundleName]);
-                    }
-                }
+            if (is_array($bundles)) {
+                $bundles = array_intersect_key($allBundles, array_flip($bundles));
+            } elseif ($bundles) {
+                $bundles = $allBundles;
+            } else {
+                continue;
             }
 
             foreach ($bundles as $bundle => $info) {
-                $id = "{$entityTypeId}.{$bundle}";
-                $route = $info['route'] ?? $this->getRoute($definition, $bundle);
+                $id = sprintf('%s.%s', $entityTypeId, $bundle);
                 $bundleEntity = $bundleStorage->load($bundle);
 
                 if (
@@ -82,10 +67,16 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
                     continue;
                 }
 
+                if (isset($overrides[$entityTypeId][$bundle]) && is_array($overrides[$entityTypeId][$bundle])) {
+                    $route = $overrides[$entityTypeId][$bundle];
+                } else {
+                    $route = $this->getRoute($definition, $bundle);
+                }
+
                 $menu[$id] = [
-                        'id' => $id,
-                        'title' => $info['label'],
-                    ] + $route + $basePluginDefinition;
+                    'id' => $id,
+                    'title' => $info['label'],
+                ] + $route + $basePluginDefinition;
             }
         }
 
@@ -104,6 +95,8 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
 
         return $bundles;
     }
+
+    abstract protected function getMenuItemName(): string;
 
     abstract protected function getRoute(EntityTypeInterface $entityType, string $bundle): array;
 }

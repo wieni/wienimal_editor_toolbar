@@ -39,3 +39,58 @@ function wienimal_editor_toolbar_update_8003()
     $config->clear('show_logo');
     $config->save();
 }
+
+/**
+ * Restructure settings config
+ */
+function wienimal_editor_toolbar_update_8004()
+{
+    $config = \Drupal::configFactory()
+        ->getEditable('wienimal_editor_toolbar.settings');
+    $oldData = $config->getRawData();
+    $newData = [];
+
+    $newData['menu'] = $oldData['menu'];
+
+    if (isset($oldData['root_menu_link'])) {
+        $newData['root_menu_link'] = $oldData['root_menu_link'];
+    }
+
+    if (isset($oldData['menu_items'])) {
+        $newData['menu_items'] = $oldData['menu_items'];
+    }
+
+    if (isset($oldData['show_version_info'])) {
+        $newData['menu_items']['version_info']['enable'] = $oldData['show_version_info'];
+    }
+
+    if (isset($oldData['show_combined_content_overview'])) {
+        $newData['menu_items']['content_overview']['enable'] = $oldData['show_combined_content_overview'];
+    }
+
+    if (isset($oldData['show_combined_add_content'])) {
+        $newData['menu_items']['content_add']['enable'] = $oldData['show_combined_add_content'];
+    }
+
+    foreach ($oldData['content'] ?? [] as $entityTypeId => $bundleValues) {
+        if (!is_array($bundleValues)) {
+            $newData['menu_items']['content_overview']['entity_types'][$entityTypeId] = true;
+            continue;
+        }
+
+        foreach ($bundleValues as $bundle => $info) {
+            $newData['menu_items']['content_overview']['entity_types'][$entityTypeId][] = $bundle;
+
+            if (is_array($info)) {
+                $newData['menu_items']['content_overview']['overrides'][$entityTypeId][$bundle] = $info;
+            }
+        }
+    }
+
+    if (isset($newData['menu_items']['content_overview']['entity_types'])) {
+        $newData['menu_items']['content_add']['entity_types'] = $newData['menu_items']['content_overview']['entity_types'];
+    }
+
+    $config->setData($newData);
+    $config->save();
+}

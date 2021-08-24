@@ -11,7 +11,7 @@ function wienimal_editor_toolbar_toolbar(): array
     $config = \Drupal::config('wienimal_editor_toolbar.settings');
     $versionInfo = \Drupal::service('wienimal_editor_toolbar.version_info');
 
-    if (!$config->get('show_version_info')) {
+    if (!$config->get('menu_items.version_info.enable')) {
         return $items;
     }
 
@@ -71,23 +71,23 @@ function wienimal_editor_toolbar_menu_links_discovered_alter(array &$links): voi
 {
     $config = \Drupal::config('wienimal_editor_toolbar.settings');
 
-    if (!$config->get('show_combined_content_overview')) {
+    if (!$config->get('menu_items.content_overview.enable')) {
         unset($links['wienimal_editor_toolbar.content_overview']);
     }
 
-    if (!$config->get('show_combined_add_content')) {
+    if (!$config->get('menu_items.content_add.enable')) {
         unset($links['wienimal_editor_toolbar.content_add']);
     }
 
     if (
         isset($links['entity.taxonomy_vocabulary.collection'])
-        && $config->get('show_combined_content_overview')
-        && $config->get('content.taxonomy_term') === 'all'
+        && $config->get('menu_items.content_overview.enable')
+        && $config->get('menu_items.content_overview.entity_types.taxonomy_term')
     ) {
         unset($links['entity.taxonomy_vocabulary.collection']);
     }
 
-    if ($config->get('show_combined_add_content')) {
+    if ($config->get('menu_items.content_add.enable')) {
         if (isset($links['admin_toolbar_tools.extra_links:node.add'])) {
             unset($links['admin_toolbar_tools.extra_links:node.add']);
             $links = array_filter($links, static function (array $link) {

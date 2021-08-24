@@ -6,6 +6,11 @@ use Drupal\Core\Entity\EntityTypeInterface;
 
 class ContentAddMenuItem extends ContentMenuItem
 {
+    protected function getMenuItemName(): string
+    {
+        return 'content_add';
+    }
+
     protected function getRoute(EntityTypeInterface $entityType, string $bundle): array
     {
         if ($entityType->getProvider() === 'eck') {
