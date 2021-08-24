@@ -30,7 +30,7 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
         return $instance;
     }
 
-    public function getDerivativeDefinitions($basePluginDefinition)
+    public function getDerivativeDefinitions($basePluginDefinition): array
     {
         $menuItemName = $this->getMenuItemName();
         $config = $this->configFactory->get('wienimal_editor_toolbar.settings');

@@ -30,7 +30,7 @@ class EditorToolbarLanguageNegotiator extends LanguageNegotiator
         $this->currentUser = $currentUser;
     }
 
-    public function initializeType($type)
+    public function initializeType($type): array
     {
         $language = $this->languageManager->getDefaultLanguage();
 
@@ -43,10 +43,5 @@ class EditorToolbarLanguageNegotiator extends LanguageNegotiator
         }
 
         return [static::METHOD_ID => $language];
-    }
-
-    public function initLanguageManager()
-    {
-        parent::initLanguageManager();
     }
 }

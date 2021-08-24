@@ -3,7 +3,7 @@
 /**
  * Make sure all config keys have default values
  */
-function wienimal_editor_toolbar_update_8002()
+function wienimal_editor_toolbar_update_8002(): void
 {
     $config = \Drupal::configFactory()->getEditable('wienimal_editor_toolbar.settings');
     $defaults = [
@@ -31,7 +31,7 @@ function wienimal_editor_toolbar_update_8002()
 /**
  * Remove show_logo setting
  */
-function wienimal_editor_toolbar_update_8003()
+function wienimal_editor_toolbar_update_8003(): void
 {
     $config = \Drupal::configFactory()
         ->getEditable('wienimal_editor_toolbar.settings');
@@ -43,7 +43,7 @@ function wienimal_editor_toolbar_update_8003()
 /**
  * Restructure settings config
  */
-function wienimal_editor_toolbar_update_8004()
+function wienimal_editor_toolbar_update_8004(): void
 {
     $config = \Drupal::configFactory()
         ->getEditable('wienimal_editor_toolbar.settings');

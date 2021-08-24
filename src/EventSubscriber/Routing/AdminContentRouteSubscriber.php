@@ -8,14 +8,14 @@ use Symfony\Component\Routing\RouteCollection;
 
 class AdminContentRouteSubscriber extends RouteSubscriberBase
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         $events[RoutingEvents::ALTER] = ['onAlterRoutes'];
 
         return $events;
     }
 
-    protected function alterRoutes(RouteCollection $collection)
+    protected function alterRoutes(RouteCollection $collection): void
     {
         if ($route = $collection->get('system.admin_content')) {
             $permission = implode('+', array_filter([

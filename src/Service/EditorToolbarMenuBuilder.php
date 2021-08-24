@@ -23,7 +23,7 @@ class EditorToolbarMenuBuilder implements TrustedCallbackInterface
     protected $menuTree;
     /** @var AccountProxyInterface */
     protected $currentUser;
-    /** @var ModuleHandlerInterface **/
+    /** @var ModuleHandlerInterface */
     protected $moduleHandler;
     /** @var MenuActiveTrailInterface */
     protected $menuActiveTrail;
@@ -34,11 +34,11 @@ class EditorToolbarMenuBuilder implements TrustedCallbackInterface
     /** @var ConfigFactoryInterface */
     protected $configFactory;
 
-    /** @var LanguageNegotiatorInterface **/
+    /** @var LanguageNegotiatorInterface */
     protected $originalNegotiator;
-    /** @var LanguageNegotiator **/
+    /** @var LanguageNegotiator */
     protected $defaultNegotiator;
-    /** @var EditorToolbarLanguageNegotiator **/
+    /** @var EditorToolbarLanguageNegotiator */
     protected $customNegotiator;
 
     public function __construct(
@@ -134,6 +134,11 @@ class EditorToolbarMenuBuilder implements TrustedCallbackInterface
             && $this->currentUser->id() !== '1';
     }
 
+    public static function trustedCallbacks(): array
+    {
+        return ['preRenderTray'];
+    }
+
     protected function getMenuName(): ?string
     {
         return $this->configFactory
@@ -145,7 +150,7 @@ class EditorToolbarMenuBuilder implements TrustedCallbackInterface
     {
         $activeTrail = $this->menuActiveTrail->getActiveTrailIds($this->getMenuName());
 
-        $parameters = (new MenuTreeParameters)
+        $parameters = (new MenuTreeParameters())
             ->setActiveTrail($activeTrail)
             ->excludeRoot()
             ->setMaxDepth(3)
@@ -198,10 +203,5 @@ class EditorToolbarMenuBuilder implements TrustedCallbackInterface
             ->getCurrentLanguage(LanguageInterface::TYPE_INTERFACE)
             ->getId();
         $this->translationManager->setDefaultLangcode($adminLangcode);
-    }
-
-    public static function trustedCallbacks(): array
-    {
-        return ['preRenderTray'];
     }
 }

@@ -9,7 +9,7 @@ use Drupal\wienimal_editor_toolbar\Plugin\Discovery\MenuYamlDiscovery;
 
 class MenuLinkManager extends MenuLinkManagerAliasBase
 {
-    protected function getDiscovery()
+    protected function getDiscovery(): ChainedDiscovery
     {
         return new ChainedDiscovery(
             $this->createYamlDiscovery('links.menu', 'admin'),

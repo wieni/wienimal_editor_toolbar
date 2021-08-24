@@ -15,7 +15,7 @@ class ContentOverviewMenuItem extends ContentMenuItem
     {
         if ($entityType->getProvider() === 'eck') {
             return [
-                'route_name' => "eck.entity.{$entityType->id()}.list",
+                'route_name' => sprintf('eck.entity.%s.list', $entityType->id()),
                 'route_parameters' => [],
                 'options' => [
                     'query' => [

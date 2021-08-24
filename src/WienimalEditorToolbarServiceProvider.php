@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class WienimalEditorToolbarServiceProvider implements ServiceModifierInterface
 {
-    public function alter(ContainerBuilder $container)
+    public function alter(ContainerBuilder $container): void
     {
         if (
             $container->has('language_negotiator')

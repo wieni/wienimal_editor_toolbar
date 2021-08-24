@@ -104,7 +104,7 @@ class EditorToolbarTreeManipulators
     {
         self::walkTreeRecursive(
             $tree,
-            function (MenuLinkTreeElement $value, string $key) use ($tree) {
+            function (MenuLinkTreeElement $value, string $key) use ($tree): void {
                 $children = array_filter(
                     $value->subtree,
                     function (MenuLinkTreeElement $treeElement): bool {
@@ -128,18 +128,14 @@ class EditorToolbarTreeManipulators
      * Apply a user function to every item of a menu tree
      *
      * @param MenuLinkTreeElement|MenuLinkTreeElement[] $tree
-     * @return void
      */
-    protected static function walkTreeRecursive(array $tree, callable $callback)
+    protected static function walkTreeRecursive(array $tree, callable $callback): void
     {
         array_walk($tree, [self::class, 'walkTreeRecursiveHandler'], $callback);
     }
 
-    /**
-     * @param MenuLinkTreeElement|MenuLinkTreeElement[] $value
-     * @return void
-     */
-    protected static function walkTreeRecursiveHandler($value, string $key, callable $callback)
+    /** @param MenuLinkTreeElement|MenuLinkTreeElement[] $value */
+    protected static function walkTreeRecursiveHandler($value, string $key, callable $callback): void
     {
         if (is_array($value)) {
             array_walk($value, [self::class, 'walkTreeRecursiveHandler'], $callback);

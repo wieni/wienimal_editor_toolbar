@@ -18,7 +18,7 @@ class ChainedDiscovery implements DiscoveryInterface
         $this->discoveries = $discoveries;
     }
 
-    public function getDefinitions()
+    public function getDefinitions(): array
     {
         return array_reduce(
             $this->discoveries,

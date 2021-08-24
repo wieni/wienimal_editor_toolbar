@@ -44,7 +44,7 @@ class ContentAddMenuItem extends ContentMenuItem
         foreach (['add-form', 'add-page'] as $linkTemplate) {
             if ($entityType->hasLinkTemplate($linkTemplate)) {
                 return [
-                    'route_name' => "entity.{$entityType->id()}.{$linkTemplate}",
+                    'route_name' => sprintf('entity.%s.%s', $entityType->id(), $linkTemplate),
                     'route_parameters' => [
                         'entity_type_id' => $entityType->id(),
                     ],

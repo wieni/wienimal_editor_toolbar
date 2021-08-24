@@ -4,14 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.1.0]
+## [4.1.0] - 2021-08-24
 ### Added
 - Support overriding content overview & content add routes separately
 - Support hiding/showing content overview & content add routes separately ([#7](https://github.com/wieni/wienimal_editor_toolbar/issues/7))
 - Support overriding a content menu link route without having to specify all bundles that have to be included
+- Add Rector dev dependency
 
 ### Changed
 - Change settings config structure to be more flexible
+- Update dev dependencies
+- Apply coding standard fixes
 
 ## [4.0.4] - 2021-08-23
 ### Fixed
