@@ -34,7 +34,7 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
     {
         $menuItemName = $this->getMenuItemName();
         $config = $this->configFactory->get('wienimal_editor_toolbar.settings');
-        $entityTypes = $config->get(sprintf('menu_items.%s.entity_types', $menuItemName));
+        $entityTypes = $config->get(sprintf('menu_items.%s.entity_types', $menuItemName)) ?? [];
         $overrides = $config->get(sprintf('menu_items.%s.overrides', $menuItemName));
         $menu = [];
 
