@@ -1,12 +1,18 @@
 menu: admin
 root_menu_link: system.admin
-show_version_info: true
-show_combined_content_overview: false
-show_combined_add_content: false
-content:
-  node: all
-  taxonomy_term: all
 menu_items:
   expand: {  }
   remove: {  }
   unclickable: {  }
+  version_info:
+    enable: true
+  content_overview:
+    enable: false
+    entity_types:
+      node: true
+      taxonomy_term: true
+  content_add:
+    enable: false
+    entity_types:
+      node: true
+      taxonomy_term: true
