@@ -103,6 +103,7 @@ class TranslatableEntityLabelMarkup implements MarkupInterface
         return ['entityTypeId', 'entityId'];
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $this->__toString();
