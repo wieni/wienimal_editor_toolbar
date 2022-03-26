@@ -67,6 +67,13 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
                     continue;
                 }
 
+                if (
+                    $this->moduleHandler->moduleExists('node_singles')
+                    && $bundleEntity->getThirdPartySetting('node_singles', 'is_single')
+                ) {
+                    continue;
+                }
+
                 if (isset($overrides[$entityTypeId][$bundle]) && is_array($overrides[$entityTypeId][$bundle])) {
                     $route = $overrides[$entityTypeId][$bundle];
                 } else {

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.4] - 2022-03-26
+### Added
+- Add support for the [Node Singles](https://www.drupal.org/project/node_singles) module
+
 ## [4.1.3] - 2021-12-16
 ### Fixed
 - Fix the following notice appearing when using PHP 8.1:
