@@ -79,14 +79,6 @@ function wienimal_editor_toolbar_menu_links_discovered_alter(array &$links): voi
         unset($links['wienimal_editor_toolbar.content_add']);
     }
 
-    if (
-        isset($links['entity.taxonomy_vocabulary.collection'])
-        && $config->get('menu_items.content_overview.enable')
-        && $config->get('menu_items.content_overview.entity_types.taxonomy_term')
-    ) {
-        unset($links['entity.taxonomy_vocabulary.collection']);
-    }
-
     if ($config->get('menu_items.content_add.enable')) {
         if (isset($links['admin_toolbar_tools.extra_links:node.add'])) {
             unset($links['admin_toolbar_tools.extra_links:node.add']);
