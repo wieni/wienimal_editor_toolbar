@@ -95,6 +95,8 @@ class EditorToolbarMenuBuilder implements TrustedCallbackInterface
             $manipulators[] = ['callable' => 'toolbar_tools_menu_navigation_links'];
         }
 
+        $this->moduleHandler->alter('wienimal_editor_toolbar_manipulators', $manipulators, $menuName);
+
         $tree = $this->menuTree->transform($tree, $manipulators);
 
         // Finally, build a renderable array from the transformed tree.
