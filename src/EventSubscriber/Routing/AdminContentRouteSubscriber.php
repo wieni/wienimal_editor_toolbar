@@ -18,7 +18,7 @@ class AdminContentRouteSubscriber extends RouteSubscriberBase
     protected function alterRoutes(RouteCollection $collection): void
     {
         if ($route = $collection->get('system.admin_content')) {
-            $permission = implode('+', array_filter([
+            $permission = implode(',', array_filter([
                 $route->getRequirement('_permission'),
                 'access editor toolbar',
             ]));
