@@ -10,8 +10,8 @@
         }
     ],
     "require": {
-        "php": ">=7.1.0",
-        "drupal/core": "^8.8 || ^9.0"
+        "php": ">=7.3.0",
+        "drupal/core": "^9.3 || ^10"
     },
     "require-dev": {
         "composer-runtime-api": "^2.0",

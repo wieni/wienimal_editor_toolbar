@@ -60,7 +60,7 @@ function wienimal_editor_toolbar_toolbar_alter(array &$items): void
  */
 function wienimal_editor_toolbar_locale_translation_projects_alter(array &$projects): void
 {
-    $path = drupal_get_path('module', 'wienimal_editor_toolbar') . '/translations/%language.po';
+    $path = \Drupal::service('extension.list.module')->getPath('wienimal_editor_toolbar') . '/translations/%language.po';
     $projects['wienimal_editor_toolbar']['info']['interface translation server pattern'] = $path;
 }
 
