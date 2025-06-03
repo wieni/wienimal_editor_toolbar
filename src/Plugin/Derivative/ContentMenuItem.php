@@ -84,6 +84,12 @@ abstract class ContentMenuItem extends DeriverBase implements ContainerDeriverIn
                     'id' => $id,
                     'title' => $info['label'],
                 ] + $route + $basePluginDefinition;
+
+                if ('system.admin_content' === $route['route_name'] && !empty($route['route_parameters'])) {
+                    $menu[$id]['options']['attributes'] = [
+                        'data-drupal-link-query' => \json_encode($route['route_parameters']),
+                    ];
+                }
             }
         }
 
