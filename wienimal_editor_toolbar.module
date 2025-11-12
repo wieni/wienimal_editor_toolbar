@@ -23,7 +23,7 @@ function wienimal_editor_toolbar_toolbar(): array
         '#type' => 'toolbar_item',
         'tab' => [
             '#type' => 'link',
-            '#title' => sprintf('%s (%s)', $info['version'], $info['date']->format('d/m/y - h:i')),
+            '#title' => sprintf('%s (%s)', $info['version'], $info['date']->format('d/m/Y - H:i')),
             '#url' => Url::fromUserInput('/version.json'),
             '#attributes' => [
                 'title' => t('Version'),
