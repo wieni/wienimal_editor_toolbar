@@ -6,7 +6,6 @@ use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\ToStringTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -26,8 +25,6 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  */
 class TranslatableEntityLabelMarkup implements MarkupInterface
 {
-    use ToStringTrait;
-
     /**
      * Entity type ID of entity whose label is to be displayed translated.
      *
@@ -107,6 +104,11 @@ class TranslatableEntityLabelMarkup implements MarkupInterface
     public function jsonSerialize()
     {
         $this->__toString();
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->render();
     }
 
     public function render()
