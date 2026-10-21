@@ -1,0 +1,10 @@
+toolbar.active_link:
+    js:
+        js/toolbar-active-link.js: {}
+    dependencies:
+        - core/jquery
+        - core/drupal
+        - core/drupalSettings
+        # Its behavior marks links too, so it has to run before the toolbar's.
+        - core/drupal.active-link
+        - toolbar/toolbar.menu
