@@ -122,9 +122,12 @@ class TranslatableEntityLabelMarkup implements MarkupInterface
             // 3. the desired langcode exists as site language
             // This is done ahead of loading the entity from storage in case it is a
             // config entity, so the config will be loaded with language overrides.
+            // The langcode is NULL once unserialized (see __sleep()): no language
+            // has that langcode, so the current language is used.
             $language_manager = $this->getLanguageManager();
             if ($language_manager->isMultilingual() &&
                 ($original_config_language = $language_manager->getConfigOverrideLanguage()) &&
+                $this->langcode !== null &&
                 ($this->langcode !== $original_config_language->getId()) &&
                 ($override_language = $language_manager->getLanguage($this->langcode))) {
                 $language_manager->setConfigOverrideLanguage($override_language);
