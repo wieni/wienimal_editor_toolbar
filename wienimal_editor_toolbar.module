@@ -56,6 +56,20 @@ function wienimal_editor_toolbar_toolbar_alter(array &$items): void
 }
 
 /**
+ * Implements @see hook_library_info_alter
+ *
+ * Wherever the toolbar is used, load our fix for its active links (both
+ * orientations) after toolbar.menu.js and core/drupal.active-link, and before
+ * toolbar.js runs them.
+ */
+function wienimal_editor_toolbar_library_info_alter(array &$libraries, string $extension): void
+{
+    if ($extension === 'toolbar' && isset($libraries['toolbar'])) {
+        $libraries['toolbar']['dependencies'][] = 'wienimal_editor_toolbar/toolbar.active_link';
+    }
+}
+
+/**
  * Implements @see hook_locale_translation_projects_alter
  */
 function wienimal_editor_toolbar_locale_translation_projects_alter(array &$projects): void

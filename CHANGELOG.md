@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Fixed
+- Only highlight the toolbar link of the current content overview: on
+  `/admin/content?type=page` every content overview link and "Add content" were
+  highlighted (and the vertical toolbar expanded "Add content"), because core's
+  toolbar marks every link to the current path whatever its query string
+  (horizontal toolbar since Drupal 10.2). Links to other paths are left alone.
+  This makes core patches for the same problem unnecessary, such as
+  `fix_active_menu_item_having_query_string_in_path.patch` in the Drupal
+  monorepo; the fix works with or without it.
+
 ## [4.1.6] - 2023-07-10
 ### Added
 - Add `HOOK_wienimal_editor_toolbar_manipulators_alter` hook ([#23](https://github.com/wieni/wienimal_editor_toolbar/pull/23))
