@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [4.4.0] - 2026-10-26
+### Added
+- Drupal 12 support.
+
 ### Fixed
 - Only highlight the toolbar link of the current content overview: on
   `/admin/content?type=page` every content overview link and "Add content" were
@@ -14,6 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   This makes core patches for the same problem unnecessary, such as
   `fix_active_menu_item_having_query_string_in_path.patch` in the Drupal
   monorepo; the fix works with or without it.
+- Replace the deprecated `ToStringTrait` in `TranslatableEntityLabelMarkup`; it is removed in Drupal 13.
+- Don't look up a `NULL` langcode in `TranslatableEntityLabelMarkup::render()`. PHP 8.5 deprecates the `NULL` array
+  offset this caused on every page with the toolbar; the rendered labels are unchanged.
+
+### Removed
+- Support for Drupal before 11.4 and PHP before 8.2. The module now requires Drupal `^11.4 || ^12` and PHP 8.2 or
+  higher.
 
 ## [4.1.6] - 2023-07-10
 ### Added
